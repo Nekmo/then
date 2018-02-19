@@ -19,6 +19,10 @@ class ThenError(Exception):
         return msg
 
 
+class ValidationError(ThenError):
+    pass
+
+
 def catch(fn):
     def wrap(*args, **kwargs):
         try:

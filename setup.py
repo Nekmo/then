@@ -47,7 +47,7 @@ test_requirements = [
 setup(
     name='then',
     version='0.1.0',
-    description="When "something" THEN send email/sms/telegram/event/execute... or Whatever ",
+    description="When \"something\" THEN send email/sms/telegram/event/execute... or Whatever ",
     long_description=readme + '\n\n' + history,
     author="Nekmo",
     author_email='contacto@nekmo.com',
