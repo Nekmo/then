@@ -13,6 +13,9 @@ Los 3 pilares de THEN son:
 * Template de renderizado
 * Mensaje
 
+Ejemplo básico
+==============
+
 Éste es un ejemplo básico de una aplicación de monitorización de discos duros (sin aprovechar todo el potencial de
 THEN) que conjunta las 3 partes:
 
@@ -44,6 +47,9 @@ O simplificado:
     }).send()
 
 
+Múltiples servicios
+===================
+
 No obstante, si queremos tener varios métodos de envío (como es la idea tras THEN) esta forma deja de ser eficiente,
 incluyéndose así una forma de poder incluir varias configuraciones y templates personalizados por cada servicio:
 
@@ -65,6 +71,9 @@ incluyéndose así una forma de poder incluir varias configuraciones y templates
         "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
     }).send()
 
+
+Desde archivos
+==============
 
 Como no es posible ni eficiente introducir en el código la configuración del servicio, THEN permite leer desde
 un archivo de configuración dicha información:
@@ -95,6 +104,10 @@ archivo, o usando el parámetro ``format=``, y su sección de configuración tie
             }
         ]
     }
+
+
+Múltiples configuraciones
+=========================
 
 Por defecto, se usará la primera configuración para el servicio disponible. No obstante, es posible tener varias
 disponibles usando el parámetro adicional ``send_name``, y usando dicho ``send_name`` en ``.use()``:
