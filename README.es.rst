@@ -87,7 +87,7 @@ un archivo de configuración dicha información:
     ])
 
 ``from_config`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
-archivo, o usando el parámetro ``format=``, y su sección de configuración tiene una  estructura cerrada:
+archivo, o usando el parámetro ``format=``), y su sección de configuración tiene una estructura cerrada:
 
 .. code-block:: json
 
@@ -110,7 +110,7 @@ Múltiples configuraciones
 =========================
 
 Por defecto, se usará la primera configuración para el servicio disponible. No obstante, es posible tener varias
-disponibles usando el parámetro adicional ``send_name``, y usando dicho ``send_name`` en ``.use()``:
+usando el parámetro adicional ``send_name``, y usando dicho ``send_name`` en ``.use()``:
 
 .. code-block:: python
 
