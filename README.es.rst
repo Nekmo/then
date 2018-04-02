@@ -26,11 +26,10 @@ THEN) que conjunta las 3 partes:
     config = EmailConfig(to='nekmo@localhost')
     template = EmailTemplate(subject="[{level.upper}] HDD {name} lifetime {lifetime}",
                              body="Hello {user},\nThis is the latest monitoring result: {result}")
-    template.set_config(config)
     message = template.render({
         "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
     })  # EmailMessage
-    message.send()
+    message.send(config)
 
 
 O simplificado:
