@@ -88,7 +88,7 @@ un archivo de configuración dicha información:
 ``from_config`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
 archivo, o usando el parámetro ``format=``), y su sección de configuración tiene una estructura cerrada:
 
-.. code-block:: json
+.. code::
 
     {
         "send_config": [
@@ -154,7 +154,7 @@ fichero de configuración. La función ``from_config`` permite de nuevo este uso
 
 En el archivo de configuración:
 
-.. code-block:: json
+.. code::
 
     {
         "send_template": [
