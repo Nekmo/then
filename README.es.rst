@@ -174,6 +174,7 @@ En el archivo de configuración:
 
 Diferentes renders
 ==================
+
 Por defecto, THEN utiliza para renderizar los templates la función ``.format()`` de Python, la cual puede
 consultarse `aquí <https://docs.python.org/3/library/string.html#formatstrings>`_. Pero este formato puede quedarse
 corto para según qué situaciones, necesitando opciones más potentes. Existen otras formas de renderizar, como por
@@ -207,3 +208,83 @@ Pero THEN es capaz de hacer este trabajo de forma automática:
                       body="Hello {{ user }},\nThis is the latest monitoring result: {{ result }}"),
     ], template_mixin=Jinja2RenderMixin)
 
+
+
+Archivos adjuntos
+=================
+
+Cada servicio permite adjuntar diferentes tipos de archivos y datos, por lo que THEN soporta en su versión actual
+los siguientes:
+
+* Photo
+* Audio
+* Document
+* Video
+* Voice
+* Contact
+* Location
+* File
+
+Un ejemplo de su uso sería:
+
+.. code-block:: python
+
+    from then import Then
+    from then.attach import Photo
+
+    message = Then(configs=[
+        ...
+    ).use('telegram').render({
+        ...
+    })
+    message.attach(Photo('/path/to/image.jpg')).send()
+
+
+No obstante, cada servicio tiene sus propias limitaciones, sobre todo en cuanto a archivos adjuntos se refiere. Algunos
+permiten enviar varios, otros sólo uno, y otros incluso ninguno. También hay limitaciones por tipo de archivo,
+tamaño, etc. THEN tiene varias opciones para solventar estas posibles limitaciones, para las cuales se incluyen las
+siguientes 3 opciones:
+
+* **unsupported**: acción a realizar en caso de no soportarse el tipo de archivo. Posibles acciones: ``replace``
+  (buscará la mejor solución), ``ignore`` (no se enviará este archivo) o ``raise`` (saltará una excepción).
+* **error**: en caso de ocurrir una excepción, o no haber un posible replace, acción a realizar. Posible acciones:
+  ``ignore`` (ignorar el error) o ``raise`` (saltará la excepción original).
+* *nombre del servicio*. Esta última opción consiste en, usando el nombre del servicio (por ejemplo, *email*)
+  definir una de las soluciones anteriores (``replace``, ``ignore`` o ``raise``) o definir otro tipo de adjunto a
+  utilizar.
+
+
+Ejemplo que conjunta las 3 opciones a nivel global:
+
+
+.. code-block:: python
+
+    from then import Then
+    from then.attach import Photo
+
+    message = Then(configs=[
+        ...
+    ).use('telegram').render({
+        ...
+    })
+    message.attach(Photo('/path/to/image.jpg'), unsupported="ignore", error="ignore",
+                   email="replace").send()
+
+
+También es posible emplear estas opciones por cada archivo:
+
+.. code-block:: python
+
+    from then import Then
+    from then.attach import Photo
+
+    message = Then(configs=[
+        ...
+    ).use('telegram').render({
+        ...
+    })
+    message.attach(Photo('/path/to/image.jpg', unsupported="ignore", error="ignore",
+                         email=File('/path/to/image2.jpg'))).send()
+
+
+Por defecto, **unsupported** usará ``replace`` y **error** usará ``raise``.
