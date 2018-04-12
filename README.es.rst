@@ -26,7 +26,7 @@ THEN) que conjunta las 3 partes:
     config = EmailConfig(to='nekmo@localhost')
     template = EmailTemplate(subject="[{level.upper}] HDD {name} lifetime {lifetime}",
                              body="Hello {user},\nThis is the latest monitoring result: {result}")
-    message = template.render({
+    message = template.render(**{
         "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
     })  # EmailMessage
     message.send(config)
@@ -41,7 +41,7 @@ O simplificado:
     config = EmailConfig(to='nekmo@localhost').template(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello {user},\nThis is the latest monitoring result: {result}"
-    ).render({
+    ).render(**{
         "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
     }).send()
 
@@ -66,7 +66,7 @@ incluyéndose así una forma de poder incluir varias configuraciones y templates
                       body="Hello {user},\nThis is the latest monitoring result: {result}"),
         TelegramTemplate(body="**[{level.upper}] HDD {name} lifetime {lifetime}**\n\nResult: {result}"),
     ])
-    t.use('telegram').render({
+    t.use('telegram').render(**{
         "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
     }).send()
 
@@ -122,7 +122,7 @@ usando el parámetro adicional ``send_name``, y usando dicho ``send_name`` en ``
     ], templates=[
         ...
     ])
-    t.use('alerts').render({
+    t.use('alerts').render(**{
         ...
     }).send()
 
@@ -233,7 +233,7 @@ Un ejemplo de su uso sería:
 
     message = Then(configs=[
         ...
-    ).use('telegram').render({
+    ).use('telegram').render(**{
         ...
     })
     message.attach(Photo('/path/to/image.jpg')).send()
@@ -263,7 +263,7 @@ Ejemplo que conjunta las 3 opciones a nivel global:
 
     message = Then(configs=[
         ...
-    ).use('telegram').render({
+    ).use('telegram').render(**{
         ...
     })
     message.attach(Photo('/path/to/image.jpg'), unsupported="ignore", error="ignore",
@@ -279,7 +279,7 @@ También es posible emplear estas opciones por cada archivo:
 
     message = Then(configs=[
         ...
-    ).use('telegram').render({
+    ).use('telegram').render(**{
         ...
     })
     message.attach(Photo('/path/to/image.jpg', unsupported="ignore", error="ignore",

@@ -39,8 +39,10 @@ class EmailType(CharType):
 
 class TypesMeta(type):
     def __new__(meta, name, bases, dct):
-        meta.types = {key: value() if inspect.isclass(value) else value for key, value in dct.items()
-                      if isinstance(value, Type) or (inspect.isclass(value) and issubclass(value, Type))}
+        base = bases[0]
+        if base is not object:
+            base.types = {key: value() if inspect.isclass(value) else value for key, value in dct.items()
+                          if isinstance(value, Type) or (inspect.isclass(value) and issubclass(value, Type))}
         return super(TypesMeta, meta).__new__(meta, name, bases, dct)
 
     def __init__(cls, name, bases, dct):
