@@ -3,13 +3,18 @@
 
 """The setup script."""
 import os
-import uuid
-
 import sys
-from setuptools import setup, find_packages
-from pip.req import parse_requirements
+from distutils.version import StrictVersion
+from setuptools import setup, find_packages, __version__ as setuptool_version
 
-__dir__ = os.path.abspath(os.path.dirname(__file__))
+dirname = os.path.abspath(os.path.dirname(__file__))
+
+
+REQUIREMENTS_FILES = [
+    {'name': 'common-requirements.txt'},
+    {'name': 'py2-requirements.txt', 'marker': 'python_version<"3.0"', "include": sys.version_info < (3,0)},
+    {'name': 'py3-requirements.txt', 'marker': 'python_version>"3.0"', "include": sys.version_info > (3,0)},
+]
 
 
 def get_url(ir):
@@ -25,15 +30,29 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 
-# Requirements list
-requirements_path = os.path.join(__dir__, 'py{}-requirements.txt'.format(sys.version_info.major))
-if os.path.exists(requirements_path):
-    requirements = parse_requirements(requirements_path, session=uuid.uuid1())
-    install_requires = [str(ir.req) for ir in requirements if not get_url(ir)]
-    dependency_links = [get_url(ir) for ir in requirements if get_url(ir)]
-else:
-    install_requires = []
-    dependency_links = []
+def read_requirements_file(path):
+    if not os.path.lexists(path):
+        return
+    with open(path) as f:
+        lines = f.readlines()
+    for line in lines:
+        line = line.split('#', 1)[0]
+        line = line.strip()
+        if line.startswith('-'):
+            continue
+        yield line
+
+
+def read_requirements_files(files):
+    reqs = []
+    for file in files:
+        if StrictVersion(setuptool_version) >= StrictVersion('20.2'):
+            reqs.extend([('{};{}'.format(req, file['marker']) if file.get('marker') else req)
+                         for req in read_requirements_file(file['name'])])
+        elif file.get('include', True):
+            # Retrocompatibility mode for setuptools < 20.2
+            reqs.extend(list(read_requirements_file(file['name'])))
+    return reqs
 
 
 setup_requirements = [
@@ -59,8 +78,7 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=install_requires,
-    dependency_links=dependency_links,
+    install_requires=read_requirements_files(REQUIREMENTS_FILES),
     license="MIT license",
     zip_safe=False,
     keywords='then',
