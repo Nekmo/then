@@ -10,11 +10,13 @@ biblioteca especiazada, la cual ha sido creada bajo el nombre de THEN.
 Los 3 pilares de THEN son:
 
 * Configuración del servicio.
-* Template de renderizado
+* Pipes (entre los que se encuentran los templates de renderizado)
 * Mensaje
 
 Ejemplo básico
 ==============
+
+TODO: los templates de servicio desaparecen en favor de los pipes. Los pipes son genéricos de todos los servicios
 
 Éste es un ejemplo básico de una aplicación de monitorización de discos duros (sin aprovechar todo el potencial de
 THEN) que conjunta las 3 partes:
