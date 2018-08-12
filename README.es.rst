@@ -1,25 +1,15 @@
 THEN
 ####
-Muchos programas pueden requerir comunicarse con el usuario o con otros sistemas ante ciertos eventos. En tal
-situación, lo más habitual es implementar el envío de un email, y permitir al usuario configurar el servidor, el
-origen y el destinarario de dicho email. No obstante, esta solución es insuficiente para muchos usuarios de la
-aplicación, y acaban requiriendo la implementación de nuevos métodos de envío, como SMS, Telegram. IFTTT, Slack...
-Este trabajo de implementación, que se repite en muchas aplicaciones, puede (y debería) ser realizada por una
-biblioteca especiazada, la cual ha sido creada bajo el nombre de THEN.
+Esta biblioteca es una colección de medios de comunicación con servicios externos al programa, denominados
+"componentes". Algunos ejemplos son email, Telegram o Slack. No sólo pueden enviarse mensajes, sino también eventos,
+como puede ser a IFTTT, Homeassistant, entre otros. Then incluye además opciones para facilitar el uso entre
+componentes y de configuración.
 
-Los 3 pilares de THEN son:
-
-* Configuración del servicio.
-* Pipes (entre los que se encuentran los templates de renderizado)
-* Mensaje
 
 Ejemplo básico
 ==============
 
-TODO: los templates de servicio desaparecen en favor de los pipes. Los pipes son genéricos de todos los servicios
-
-Éste es un ejemplo básico de una aplicación de monitorización de discos duros (sin aprovechar todo el potencial de
-THEN) que conjunta las 3 partes:
+Éste es un ejemplo básico para una aplicación de monitorización de discos duros:
 
 .. code-block:: python
 
@@ -46,6 +36,8 @@ O simplificado:
 Templates
 =========
 
+Como en muchas ocasiones los mensajes no son estáticos, es posible generar el contexto con templates:
+
 .. code-block:: python
 
     from them.templates import FormatTemplateContext
@@ -63,7 +55,7 @@ Múltiples servicios
 ===================
 
 No obstante, si queremos tener varios métodos de envío (como es la idea tras THEN) esta forma deja de ser eficiente,
-incluyéndose así una forma de poder incluir varias configuraciones y templates personalizados por cada servicio:
+incluyéndose así una forma de poder incluir varias configuraciones y contextos:
 
 .. code-block:: python
 
@@ -75,16 +67,80 @@ incluyéndose así una forma de poder incluir varias configuraciones y templates
     t = Then(
         Email(to='nekmo@localhost'),
         Telegram(token='...', to='nekmo'),
-        Telegram(token='...', to='myfriend', use_as='telegram-friend'),
+        Telegram(token='...', to='myfriend').use_as('telegram-friend'),
     t = t.context(
         FormatTemplateContext(
             subject="[{level.upper}] HDD {name} lifetime {lifetime}",
             body="Hello {user},\nThis is the latest monitoring result: {result}"
         ).context_as('default'),
-        GetContext('default').join(body=['subject', 'body']).context_as('default@telegram')
+        GetContext('default').join(body=['subject', 'body']).context_as('default@telegram'),
     )
     message = t.args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
     message.use('telegram-friend').send()
+
+
+Los servicios por defecto reciben el nombre de contexto "default", y se aplicará a todos los componentes que sea
+posible, salvo que se defina uno usando arroba y a continuación el nombre del componente. El valor tras arroba
+puede ser el nombre del componente con "use_as", o el nombre de la clase del componente. Es posible definir varios
+valores para el método, como en el siguiente ejemplo::
+
+    .context_as('default@telegram', 'default@email')
+
+O de la siguiente forma::
+
+    .context_as(name='default', components=['telegram', 'email'])
+
+Puede haber varios default, incluso sin definir el componente. En tal caso, THEN escogerá el que mejor se adapte al
+componente según las variables disponibles. Por ejemplo, si Telegram requiere "body", y 2 contextos por defecto
+ofrecen dicha variable, pero una de ellas ofrece además subject, la cual no requiere Telegram, entonces usará la que
+no tiene subject.
+
+
+Pipe
+====
+
+Los pipe permiten transformar los contextos para adecuarse a las necesidades de otro componente. Permiten copiar
+variables y transformar las variables existentes.
+
+Ejemplo para convertir un template HTML a uno de texto plano
+
+.. code-block:: python
+
+    from them.pipes import Html2Plain
+    from them.templates import FormatTemplateContext
+
+    context = FormatTemplateContext(
+        subject="[{level.upper}] HDD {name} lifetime {lifetime}",
+        body="Hello <strong>{user}</strong>,\nThis is the latest monitoring result: <code>{result}</code>"
+    )
+    context2 = context.pipe(body=Html2Plain('body'))
+
+
+Copiar variable body en description:
+
+.. code-block:: python
+
+    from them.templates import FormatTemplateContext
+
+    context = FormatTemplateContext(
+        subject="[{level.upper}] HDD {name} lifetime {lifetime}",
+        body="Hello {user},\nThis is the latest monitoring result: {result}"
+    )
+    context2 = context.pipe(description='body')
+
+
+Unir 2 variables y separarlas por un salto de línea (esta opción está de serie con el método join):
+
+.. code-block:: python
+
+    from them.pipes import Join
+    from them.templates import FormatTemplateContext
+
+    context = FormatTemplateContext(
+        subject="[{level.upper}] HDD {name} lifetime {lifetime}",
+        body="Hello {user},\nThis is the latest monitoring result: {result}"
+    )
+    context2 = context.pipe(body=Join('subject', 'body'), sep='\n\n')
 
 
 Desde archivos
@@ -95,34 +151,45 @@ un archivo de configuración dicha información:
 
 .. code-block:: python
 
-    from then import Then, from_config
+    from then import Then, LoadConfig
 
-    Then(configs=from_config('/path/to/config.json', section='send_config'), templates=[
-        ...
-    ])
+    t = Then(LoadConfig('/path/to/config.json', section='components'))
+    t.context( ... )
 
-``from_config`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
+``LoadConfig`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
 archivo, o usando el parámetro ``format=``), y su sección de configuración tiene una estructura cerrada:
 
-.. code::
+.. code-block:: json
 
     {
-        "send_config": [
+        "components": [
             {
-                "service_name: "email",
-                "to": "nekmo@localhost"
+                "component: "email",
+                "config": {
+                    "to": "nekmo@localhost"
+                }
             },
             {
-                "service_name: "telegram",
-                "token": "...",
-                "to": "name"
+                "component": "telegram",
+                "config": {
+                    "token": "...",
+                    "to": "nekmo"
+                }
+            }
+            {
+                "component": "telegram",
+                "config": {
+                    "token": "...",
+                    "to": "myfriend"
+                },
+                "use_as": "telegram-friend"
             }
         ]
     }
 
 
-Reemplazar templates
-====================
+Reemplazar contexts
+===================
 
 El usuario puede querer reemplazar el template por defecto para un servicio, lo cual podría hacer desde un
 fichero de configuración. La función ``from_config`` permite de nuevo este uso, en conjunto con su parámetro
@@ -135,28 +202,33 @@ fichero de configuración. La función ``from_config`` permite de nuevo este uso
     from then.components.telegram import TelegramTemplate
 
 
-    t = Then(configs=[
-        ...
-    ], templates=from_config('/path/to/config.json', section='send_template', defaults=[
-        EmailTemplate(subject="[{level.upper}] HDD {name} lifetime {lifetime}",
-                      body="Hello {user},\nThis is the latest monitoring result: {result}"),
-        TelegramTemplate(body="**[{level.upper}] HDD {name} lifetime {lifetime}**\n\nResult: {result}"),
-    ])
+    t = Then(...)
+    t = t.context(
+        FormatTemplateContext(
+            subject="[{level.upper}] HDD {name} lifetime {lifetime}",
+            body="Hello {user},\nThis is the latest monitoring result: {result}"
+        ).context_as('default'),
+        GetContext('default').join(body=['subject', 'body']).context_as('default@telegram'),
+    )
+    t = t.context(LoadConfig('/path/to/config.json', section='contexts'))
 
 En el archivo de configuración:
 
-.. code::
+.. code-block:: json
 
     {
-        "send_template": [
+        "contexts": [
             {
-                "service_name: "email",
-                "subject": "[{level.upper}] HDD {name} lifetime {lifetime}",
-                "body": "Hello {user},\nThis is the latest monitoring result: {result}"
+                "context_as": "default",
+                "options": {
+                    "subject": "[HDD Monitor] {name} lifetime {lifetime} ({level.upper})",
+                    "body": "Hi {user},\Latest monitoring result:\n{result}"
+                }
             },
             {
-                "service_name: "telegram",
-                "body": "**[{level.upper}] HDD {name} lifetime {lifetime}**\n\nResult: {result}"
+                "context": "default@telegram"
+                "use_context": "default",
+                "join": ["subject", "body"]
             }
         ]
     }
