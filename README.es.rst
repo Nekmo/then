@@ -21,29 +21,40 @@ THEN) que conjunta las 3 partes:
 
 .. code-block:: python
 
-    from then.components.email import EmailConfig, EmailTemplate
+    from them import Context
+    from then.components import Email
 
-    config = EmailConfig(to='nekmo@localhost')
-    template = EmailTemplate(subject="[{level.upper}] HDD {name} lifetime {lifetime}",
-                             body="Hello {user},\nThis is the latest monitoring result: {result}")
-    message = template.render(**{
-        "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
-    })  # EmailMessage
-    message.send(config)
+    context = Context(
+        subject='[ERROR] HDD SATAIII Barracuda lifetime 10%',
+        body="Hello Nekmo,\nThis is the latest monitoring result: ..."
+    )
+    email = Email(to='nekmo@localhost')
+    email.send(context)
 
 
 O simplificado:
 
 .. code-block:: python
 
-    from then.components.email import EmailConfig
+    email = Email(to='nekmo@localhost')
+    email.send(subject='[ERROR] HDD SATAIII Barracuda lifetime 10%',
+               body="Hello Nekmo,\nThis is the latest monitoring result: ...")
 
-    config = EmailConfig(to='nekmo@localhost').template(
+
+Templates
+=========
+
+.. code-block:: python
+
+    from them.templates import FormatTemplateContext
+    from then.components import Email
+
+    context = FormatTemplateContext(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello {user},\nThis is the latest monitoring result: {result}"
-    ).render(**{
-        "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
-    }).send()
+    ).args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+    email = Email(to='nekmo@localhost')
+    email.send(context)
 
 
 Múltiples servicios
@@ -55,20 +66,23 @@ incluyéndose así una forma de poder incluir varias configuraciones y templates
 .. code-block:: python
 
     from then import Then
-    from then.components.email import EmailConfig, EmailTemplate
-    from then.components.telegram import TelegramConfig, TelegramTemplate
+    from them.templates import FormatTemplateContext
+    from then.components import Email, Telegram
 
-    t = Then(configs=[
-        EmailConfig(to='nekmo@localhost'),
-        TelegramConfig(token='...', to='@nekmo'),
-    ], templates=[
-        EmailTemplate(subject="[{level.upper}] HDD {name} lifetime {lifetime}",
-                      body="Hello {user},\nThis is the latest monitoring result: {result}"),
-        TelegramTemplate(body="**[{level.upper}] HDD {name} lifetime {lifetime}**\n\nResult: {result}"),
-    ])
-    t.use('telegram').render(**{
-        "level": "error", "name": "SATAIII Barracuda", "lifetime": "10%", "user": "Nekmo", "result": "...",
-    }).send()
+
+    t = Then(
+        Email(to='nekmo@localhost'),
+        Telegram(token='...', to='nekmo'),
+        Telegram(token='...', to='myfriend', use_as='telegram-friend'),
+    t = t.context(
+        FormatTemplateContext(
+            subject="[{level.upper}] HDD {name} lifetime {lifetime}",
+            body="Hello {user},\nThis is the latest monitoring result: {result}"
+        ).context_as('default'),
+        GetContext('default').join(body=['subject', 'body']).context_as('default@telegram')
+    )
+    message = t.args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+    message.use('telegram-friend').send()
 
 
 Desde archivos
@@ -103,31 +117,6 @@ archivo, o usando el parámetro ``format=``), y su sección de configuración ti
             }
         ]
     }
-
-
-Múltiples configuraciones
-=========================
-
-Por defecto, se usará la primera configuración para el servicio disponible. No obstante, es posible tener varias
-usando el parámetro adicional ``send_name``, y usando dicho ``send_name`` en ``.use()``:
-
-.. code-block:: python
-
-    from then import Then
-    from then.components.email import EmailConfig
-
-    t = Then(configs=[
-        EmailConfig(to='nekmo@localhost', send_name="nekmo"),
-        EmailConfig(to='alerts@localhost', send_name="alerts"),
-    ], templates=[
-        ...
-    ])
-    t.use('alerts').render(**{
-        ...
-    }).send()
-
-En cualquiera de los casos, se recomienda dejar al usuario la posibilidad de definir el nombre de servicio o
-*send_name* a emplear para el envío de un mensaje con ``.use()``.
 
 
 Reemplazar templates
