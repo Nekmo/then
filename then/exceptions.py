@@ -23,6 +23,10 @@ class ValidationError(ThenError):
     pass
 
 
+class ProgrammingError(Exception):
+    pass
+
+
 def catch(fn):
     def wrap(*args, **kwargs):
         try:

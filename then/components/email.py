@@ -3,39 +3,43 @@ from __future__ import absolute_import
 from email.message import EmailMessage as MimeEmailMessage
 from smtplib import SMTP
 
-from then.components.base import ConfigBase, TemplateBase, MessageBase, split_host_port
-from then.types import EmailType, CharType
+from then.components.base import split_host_port, Component, Message
+from then.types import EmailType
+from dataclasses import dataclass
 
 
-class EmailMessage(MessageBase):
-    def __init__(self, subject, body):
-        super(EmailMessage, self).__init__(**self.get_init_data(locals()))
+@dataclass
+class EmailMessage(Message):
+    subject: str = ''
+    body: str = ''
+    component: 'Email' = None
 
-
-class EmailTemplate(TemplateBase):
-    subject = CharType
-    body = CharType
-
-    message_class = EmailMessage
-
-
-class EmailConfig(ConfigBase):
-    to = EmailType(required=True)  # TODO: multiple dests
-    from_ = EmailType(default='noreply@localhost')
-    server = CharType(default='localhost')
-
-    def __init__(self, **kwargs):
-        super(EmailConfig, self).__init__(**kwargs)
+    def __post_init__(self):
         self.message = MimeEmailMessage()
-        self.server, self.port = split_host_port(self.server, 0)
-        self.message['From'] = self.from_
-        self.message['To'] = self.to
+        self.message['From'] = self.component.from_
+        self.message['To'] = self.component.to
+        if self.body:
+            self.message['Subject'] = self.subject
+        if self.body:
+            self.message.set_content(self.body)
+            self.message.set_type(self.component.mode)
 
-    def send(self, subject, body, type='text/plain'):
-        self.message['Subject'] = subject
-        if body:
-            self.message.set_content(body)
-            self.message.set_type(type)
-        s = SMTP(self.server, self.port)
-        s.send_message(self.message, self.from_, self.to)
+    def send(self):
+        server, port = split_host_port(self.component.server, 0)
+        s = SMTP(server, port)
+        s.send_message(self.message, self.component.from_, self.component.to)
         s.quit()
+
+
+@dataclass
+class Email(Component):
+    to: str
+    from_: str = 'noreply@localhost'
+    server: str = 'localhost'
+    mode: str = 'text/plain'
+
+    _message_class = EmailMessage
+
+    class Validate:
+        to = EmailType()
+        from_ = EmailType()

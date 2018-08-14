@@ -1,3 +1,5 @@
+from then.context import Context
+from then.exceptions import ProgrammingError
 from then.renders import FormatRenderMixin
 from then.types import ItemTypes
 
@@ -36,3 +38,31 @@ class TemplateBase(ItemTypes, FormatRenderMixin):
 
     def __init__(self, **kwargs):
         super(TemplateBase, self).__init__(**kwargs)
+
+
+class Component:
+    _message_class = None
+
+    def get_class(self):
+        if not self._message_class:
+            raise ProgrammingError('_message_class is undefined on {} component class.'.format(self.__class__.__name__))
+        return self._message_class
+
+    def message(self, context=None, **kwargs) -> 'Message':
+        if context is None:
+            context = Context()
+        context.update(**kwargs)
+        return self.get_class()(**kwargs)
+
+    def send(self, context=None, **kwargs):
+        return self.message(context, **kwargs).send()
+
+
+class Message:
+    component: Component = None
+
+    def set_config(self, component: Component):
+        self.component = component
+
+    def send(self):
+        raise NotImplementedError
