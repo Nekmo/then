@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import json
 from json import JSONDecodeError
 from typing import Union
+from urllib.parse import urlparse
 
 from dataclasses import dataclass
 from requests import request, RequestException
@@ -101,4 +102,24 @@ class HttpMessageApiBase(HttpMessage):
 
     def get_url(self):
         url = self.url_pattern.format(**vars(self))
+        return url
+
+
+class HttpMessageOwnApiBase(HttpMessage):
+    default_protocol: str = 'http'
+    default_port: int = 0
+    component: Http = None
+
+    def get_url(self):
+        """API url
+
+        :return: url
+        :rtype: str
+        """
+        url = self.component.url
+        parsed = urlparse(url)
+        if not parsed.scheme:
+            url = '{}://{}'.format(self.default_protocol, url)
+        if not url.split(':')[-1].isalnum():
+            url += ':{}'.format(self.default_port)
         return url
