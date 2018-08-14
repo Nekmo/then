@@ -1,28 +1,26 @@
 from __future__ import absolute_import
 
+from dataclasses import dataclass
 from pip._vendor import requests
 
-from then.components.base import MessageBase, TemplateBase, ConfigBase
-from then.types import CharType
+from then.components.base import Component, Message
 
 TELEGRAM_API_URL = 'https://api.telegram.org/bot{token}/{method}'
 
 
-class TelegramMessage(MessageBase):
-    def __init__(self, body=''):
-        super(TelegramMessage, self).__init__(**self.get_init_data(locals()))
+@dataclass
+class TelegramMessage(Message):
+    body: str
+    component: 'Telegram' = None
+
+    def send(self):
+        requests.post(TELEGRAM_API_URL.format(token=self.component.token, method='sendMessage'),
+                      data={'chat_id': self.component.to, 'text': self.body})
 
 
-class EmailTemplate(TemplateBase):
-    body = CharType
+@dataclass
+class Telegram(Component):
+    token: str
+    to: str
 
-    message_class = TelegramMessage
-
-
-class TelegramConfig(ConfigBase):
-    token = CharType(required=True)
-    to = CharType(required=True)
-
-    def send(self, body=''):
-        requests.post(TELEGRAM_API_URL.format(token=self.token, method='sendMessage'),
-                      data={'chat_id': self.to, 'text': body})
+    _message_class = TelegramMessage
