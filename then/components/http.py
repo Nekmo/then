@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import json
 from json import JSONDecodeError
 from typing import Union
@@ -33,7 +34,6 @@ class HttpMessage(Message):
     component: 'Http' = None
 
     def __post_init__(self):
-        self.url = self.component.url
         self.content_type = self.component.content_type
         if (self.content_type or self.body) and self.component.method not in CONTENT_TYPE_METHODS:
             raise ValidationError(
@@ -54,17 +54,21 @@ class HttpMessage(Message):
                     self.component.name, self.body)
             )
 
+    def get_url(self):
+        return self.component.url
+
     def send(self):
         headers = self.component.get_headers()
+        url = self.get_url()
         if self.content_type:
             headers['content-type'] = self.content_type or headers.get('content-type') or None
         try:
-            resp = request(self.component.method, self.url, data=self.body, timeout=self.component.timeout,
+            resp = request(self.component.method, url, data=self.body, timeout=self.component.timeout,
                            stream=True, auth=tuple(self.component.auth.split(':', 1)), headers=headers)
         except RequestException as e:
-            raise ExecuteError('Exception on request to {}: {}'.format(self.url, e))
+            raise ExecuteError('Exception on request to {}: {}'.format(url, e))
         if resp.status_code >= 400:
-            raise ExecuteError('"{}" return code {}.'.format(self.url, resp.status_code))
+            raise ExecuteError('"{}" return code {}.'.format(url, resp.status_code))
         data = resp.raw.read(self.component.max_body_read, decode_content=True)
         data = data.decode('utf-8', errors='ignore')
         return data
@@ -90,3 +94,11 @@ class Http(Component):
 
     def get_headers(self):
         return dict(self.headers or {})
+
+
+class HttpMessageApiBase(HttpMessage):
+    url_pattern: str = None
+
+    def get_url(self):
+        url = self.url_pattern.format(**vars(self))
+        return url
