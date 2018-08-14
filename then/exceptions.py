@@ -27,6 +27,9 @@ class ProgrammingError(Exception):
     pass
 
 
+class ExecuteError(ThenError):
+    pass
+
 def catch(fn):
     def wrap(*args, **kwargs):
         try:

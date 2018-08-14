@@ -57,6 +57,10 @@ class Component:
     def send(self, context=None, **kwargs):
         return self.message(context, **kwargs).send()
 
+    @property
+    def name(self):
+        return self.__class__.__name__
+
 
 class Message:
     component: Component = None
