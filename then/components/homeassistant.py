@@ -6,7 +6,7 @@ from then.components.http import Http, HttpMessageOwnApiBase
 @dataclass
 class HomeAssistantMessage(HttpMessageOwnApiBase):
     event: str
-    default_port: str = 8123
+    default_port: int = 8123
     component: 'HomeAssistant' = None
 
     def get_url(self):
@@ -22,6 +22,8 @@ class HomeAssistantMessage(HttpMessageOwnApiBase):
 
 @dataclass
 class HomeAssistant(Http):
+    url: str
+    method: str = 'post'
     access: str = None
     timeout: int = 15
 

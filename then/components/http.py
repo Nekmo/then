@@ -35,28 +35,33 @@ class HttpMessage(Message):
     component: 'Http' = None
 
     def __post_init__(self):
+        self._body = self.get_body()
         self.content_type = self.component.content_type
-        if (self.content_type or self.body) and self.component.method not in CONTENT_TYPE_METHODS:
+        if (self.content_type or self._body) and self.component.method not in CONTENT_TYPE_METHODS:
             raise ValidationError(
                 'Error on {}: The body/content-type option only can be used with the {} methods.'.format(
                     self.component.name, ', '.join(CONTENT_TYPE_METHODS)
                 ))
-        if isinstance(self.body, dict) and (self.content_type == CONTENT_TYPE_ALIASES['json'] or not self.content_type):
+        if isinstance(self._body, dict) and (self.content_type == CONTENT_TYPE_ALIASES['json'] or
+                                             not self.content_type):
             self.content_type = CONTENT_TYPE_ALIASES['json']
             try:
-                self.body = json.loads(self.body)
+                self._body = json.loads(self._body)
             except JSONDecodeError:
                 raise ValidationError(
-                    'Error on {}: Invalid JSON body: {}'.format(self.component.name, self.body)
+                    'Error on {}: Invalid JSON body: {}'.format(self.component.name, self._body)
                 )
-        if isinstance(self.body, dict) and self.content_type != CONTENT_TYPE_ALIASES['form']:
+        if isinstance(self._body, dict) and self.content_type != CONTENT_TYPE_ALIASES['form']:
             raise ValidationError(
                 'Error on {}: invalid content-type for {} (dict data type)'.format(
-                    self.component.name, self.body)
+                    self.component.name, self._body)
             )
 
     def get_url(self):
         return self.component.url
+
+    def get_body(self):
+        return self.body
 
     def send(self):
         headers = self.component.get_headers()
@@ -64,7 +69,7 @@ class HttpMessage(Message):
         if self.content_type:
             headers['content-type'] = self.content_type or headers.get('content-type') or None
         try:
-            resp = request(self.component.method, url, data=self.body, timeout=self.component.timeout,
+            resp = request(self.component.method, url, data=self._body, timeout=self.component.timeout,
                            stream=True, auth=tuple(self.component.auth.split(':', 1)), headers=headers)
         except RequestException as e:
             raise ExecuteError('Exception on request to {}: {}'.format(url, e))
