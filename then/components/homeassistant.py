@@ -3,11 +3,13 @@ from dataclasses import dataclass
 from then.components.http import Http, HttpMessageOwnApiBase
 
 
-@dataclass
 class HomeAssistantMessage(HttpMessageOwnApiBase):
-    event: str
-    default_port: int = 8123
-    component: 'HomeAssistant' = None
+
+    def __init__(self, event: str, default_port: int = 8123, component: 'HomeAssistant' = None):
+        self.event = event
+        self.default_port = default_port
+        self.component = component
+        self.__post_init__()
 
     def get_url(self):
         """Home assistant url
@@ -22,10 +24,10 @@ class HomeAssistantMessage(HttpMessageOwnApiBase):
 
 @dataclass
 class HomeAssistant(Http):
-    url: str
     method: str = 'post'
     access: str = None
     timeout: int = 15
+    _message_class = HomeAssistantMessage
 
     def get_headers(self):
         return {

@@ -52,7 +52,7 @@ class Component:
         if context is None:
             context = Context()
         context.update(**kwargs)
-        return self.get_class()(**kwargs)
+        return self.get_class()(component=self, **context)
 
     def send(self, context=None, **kwargs):
         return self.message(context, **kwargs).send()

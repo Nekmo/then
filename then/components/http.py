@@ -69,8 +69,9 @@ class HttpMessage(Message):
         if self.content_type:
             headers['content-type'] = self.content_type or headers.get('content-type') or None
         try:
-            resp = request(self.component.method, url, data=self._body, timeout=self.component.timeout,
-                           stream=True, auth=tuple(self.component.auth.split(':', 1)), headers=headers)
+            resp = request(self.component.method, url, data=self._body, timeout=self.component.timeout, stream=True,
+                           auth=tuple(self.component.auth.split(':', 1)) if self.component.auth else None,
+                           headers=headers)
         except RequestException as e:
             raise ExecuteError('Exception on request to {}: {}'.format(url, e))
         if resp.status_code >= 400:
