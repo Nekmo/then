@@ -91,6 +91,8 @@ class Http(Component):
     auth: str = None
     max_body_read: int = 10000
 
+    _message_class = HttpMessage
+
     def __post_init__(self):
         self.method = self.method.lower()
         if self.method not in METHODS:

@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from then.context import Context
 from then.exceptions import ProgrammingError
 from then.renders import FormatRenderMixin
@@ -62,6 +64,7 @@ class Component:
         return self.__class__.__name__
 
 
+@dataclass
 class Message:
     component: Component = None
 
