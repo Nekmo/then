@@ -57,7 +57,7 @@ class Component:
         cls = self.get_class()
         if cls._default_init:
             fields = cls.__dataclass_fields__
-            msg_ctx = {key: context[key] for key in fields if key != 'component'}
+            msg_ctx = {key: context[key] for key in fields if key != 'component' and key in context}
             message = cls(component=self, **msg_ctx)
             message.add_extra({key: context[key] for key in context if key not in fields})
             return message

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from then.components.http import Http, HttpMessageApiBase
+from then.components.http import HttpBase, HttpMessageApiBase
 
 
 @dataclass
@@ -11,6 +11,8 @@ class IftttMessage(HttpMessageApiBase):
 
 
 @dataclass
-class Ifttt(Http):
+class Ifttt(HttpBase):
     key: str
     timeout: int = 15
+
+    _message_class = IftttMessage

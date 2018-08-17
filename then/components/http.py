@@ -29,8 +29,7 @@ CONTENT_TYPE_ALIASES = {
 }
 
 
-@dataclass
-class HttpMessage(Message):
+class HttpMessageBase(Message):
     body: Union[str, dict] = None
     component: 'Http' = None
 
@@ -82,8 +81,13 @@ class HttpMessage(Message):
 
 
 @dataclass
-class Http(Component):
-    url: str
+class HttpMessage(HttpMessageBase):
+    body: Union[str, dict] = None
+    component: 'Http' = None
+
+
+class HttpBase(Component):
+    url: str = None
     method: str = 'get'
     headers: {} = None
     content_type: str = None
@@ -91,7 +95,7 @@ class Http(Component):
     auth: str = None
     max_body_read: int = 10000
 
-    _message_class = HttpMessage
+    _message_class = None
 
     def __post_init__(self):
         self.method = self.method.lower()
@@ -105,7 +109,20 @@ class Http(Component):
         return dict(self.headers or {})
 
 
-class HttpMessageApiBase(HttpMessage):
+@dataclass
+class Http(HttpBase):
+    url: str
+    method: str = 'get'
+    headers: {} = None
+    content_type: str = None
+    timeout: int = 15
+    auth: str = None
+    max_body_read: int = 10000
+
+    _message_class = HttpMessage
+
+
+class HttpMessageApiBase(HttpMessageBase):
     url_pattern: str = None
 
     def get_url(self):
@@ -113,7 +130,7 @@ class HttpMessageApiBase(HttpMessage):
         return url
 
 
-class HttpMessageOwnApiBase(HttpMessage):
+class HttpMessageOwnApiBase(HttpMessageBase):
     default_protocol: str = 'http'
     default_port: int = 0
     component: Http = None
