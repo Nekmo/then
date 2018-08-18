@@ -1,3 +1,4 @@
+# Thanks to https://github.com/Rapptz/discord.py
 import json
 import sys
 
@@ -87,6 +88,7 @@ class DiscordMessage(HttpMessageApiBase):
 class Discord(HttpBase):
     token: str
     to: str
+    #: Get your channel ID on your url (second id): https://discordapp.com/channels/4801460148299xxxx/4801460148299xxxx
     bot_token: bool = False
     method = 'POST'
     timeout: int = 15
