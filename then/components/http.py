@@ -76,7 +76,7 @@ class HttpMessageBase(Message):
             headers['content-type'] = self.content_type or headers.get('content-type') or None
         try:
             resp = request(self.component.method, url, data=self._body, timeout=self.component.timeout, stream=True,
-                           auth=tuple(self.component.auth.split(':', 1)) if self.component.auth else None,
+                           auth=self.component.get_auth(),
                            headers=headers)
         except RequestException as e:
             raise ExecuteError('Exception on request to {}: {}'.format(url, e))
@@ -115,6 +115,9 @@ class HttpBase(Component):
 
     def get_headers(self):
         return dict(self.headers or {})
+
+    def get_auth(self):
+        return tuple(self.auth.split(':', 1)) if self.auth else None
 
 
 @dataclass
