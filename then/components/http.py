@@ -29,6 +29,13 @@ CONTENT_TYPE_ALIASES = {
 }
 
 
+class HttpException(ExecuteError):
+    def __init__(self, response):
+        message = '"{}" return code {}.\n{}'.format(response.request.url, response.status_code, response.text)
+        super().__init__(message)
+        self.response = response
+
+
 class HttpMessageBase(Message):
     body: Union[str, dict] = None
     component: 'Http' = None
@@ -45,7 +52,7 @@ class HttpMessageBase(Message):
                                              not self.content_type):
             self.content_type = CONTENT_TYPE_ALIASES['json']
             try:
-                self._body = json.loads(self._body)
+                self._body = json.dumps(self._body)
             except JSONDecodeError:
                 raise ValidationError(
                     'Error on {}: Invalid JSON body: {}'.format(self.component.name, self._body)
@@ -74,7 +81,8 @@ class HttpMessageBase(Message):
         except RequestException as e:
             raise ExecuteError('Exception on request to {}: {}'.format(url, e))
         if resp.status_code >= 400:
-            raise ExecuteError('"{}" return code {}.'.format(url, resp.status_code))
+            raise HttpException(resp)
+
         data = resp.raw.read(self.component.max_body_read, decode_content=True)
         data = data.decode('utf-8', errors='ignore')
         return data
