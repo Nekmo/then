@@ -29,6 +29,8 @@ def run_as_cmd(cmd, user, shell='bash'):
     :return: arguments
     :rtype: list
     """
+    if not user:
+        return cmd
     return ['sudo', '-s', '--set-home', '-u', user] + get_shell(shell) + [EXECUTE_SHELL_PARAM, cmd]
 
 
@@ -75,31 +77,46 @@ def execute_over_ssh(cmd, ssh, cwd=None, shell='bash'):
     return ['ssh', parts[0]] + (['-p', port] if port else []) + ['-C'] + [remote_cmd]
 
 
-@dataclass
-class CommandMessage(Message):
-    cmd: str
+class CommandMessageBase(Message):
+    cmd: str = None
     component: 'Command' = None
 
     def send(self):
         if self.component.ssh:
-            cmd = execute_over_ssh(self.cmd, self.component.ssh, self.component.cwd)
+            cmd = execute_over_ssh(self.get_cmd(), self.component.ssh, self.component.cwd)
             output = execute_cmd(cmd)
         else:
-            cmd = run_as_cmd(self.cmd, self.component.user)
+            cmd = run_as_cmd(self.get_cmd(), self.component.user)
             output = execute_cmd(cmd, self.component.cwd)
         if output:
             return output[0]
 
+    def get_cmd(self):
+        return self.cmd
+
 
 @dataclass
-class Command(Component):
-    ssh: str
-    user: str
-    cwd: str
+class CommandMessage(CommandMessageBase):
+    cmd: str
+    component: 'Command' = None
+
+
+class CommandBase(Component):
+    user: str = None
+    cwd: str = None
+    ssh: str = None
+
+    def __post_init__(self):
+        parts = (self.ssh or '').split(':', 1)
+        if len(parts) > 1 and not parts[1].isdigit():
+            raise ValidationError('Invalid port number on ssh config: {}'.format(parts[1]))
+
+
+@dataclass
+class Command(CommandBase):
+    user: str = None
+    cwd: str = None
+    ssh: str = None
 
     _message_class = CommandMessage
 
-    def __post_init__(self):
-        parts = self.ssh.split(':', 1)
-        if len(parts) > 1 and not parts[1].isdigit():
-            raise ValidationError('Invalid port number on ssh config: {}'.format(parts[1]))
