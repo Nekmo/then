@@ -1,4 +1,5 @@
 import subprocess
+from typing import Union
 
 from dataclasses import dataclass
 
@@ -8,7 +9,7 @@ from then.exceptions import ExecuteError, ValidationError
 EXECUTE_SHELL_PARAM = '-c'
 
 
-def get_shell(name):
+def get_shell(name='bash'):
     """Absolute path to command
 
     :param str name: command
@@ -20,7 +21,13 @@ def get_shell(name):
     return ['/usr/bin/env', name]
 
 
-def run_as_cmd(cmd, user, shell='bash'):
+def get_execute_command(cmd, shell='bash'):
+    if isinstance(cmd, (tuple, list)):
+        return cmd
+    return get_shell(shell) + [EXECUTE_SHELL_PARAM, ' '.join(cmd)]
+
+
+def run_as_cmd(cmd, user, shell=None):
     """Get the arguments to execute a command as a user
 
     :param str cmd: command to execute
@@ -29,9 +36,10 @@ def run_as_cmd(cmd, user, shell='bash'):
     :return: arguments
     :rtype: list
     """
+    shell = shell or 'bash'
     if not user:
-        return cmd
-    return ['sudo', '-s', '--set-home', '-u', user] + get_shell(shell) + [EXECUTE_SHELL_PARAM, cmd]
+        return get_execute_command(cmd, shell)
+    return ['sudo', '-s', '--set-home', '-u', user] + get_execute_command(cmd, shell)
 
 
 def execute_cmd(cmd, cwd=None, timeout=5):
@@ -78,7 +86,7 @@ def execute_over_ssh(cmd, ssh, cwd=None, shell='bash'):
 
 
 class CommandMessageBase(Message):
-    cmd: str = None
+    cmd: Union[str, list] = None
     component: 'Command' = None
 
     def send(self):
@@ -97,7 +105,7 @@ class CommandMessageBase(Message):
 
 @dataclass
 class CommandMessage(CommandMessageBase):
-    cmd: str
+    cmd: Union[str, list]
     component: 'Command' = None
 
 
