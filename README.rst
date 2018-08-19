@@ -28,7 +28,27 @@ then
      :alt: Requirements Status
 
 
-When "something" THEN send email/sms/telegram/event/execute... or Whatever 
+A Python library for lazy developers who want actions in their projects. Send communications
+and execute actions in remote services. THEN supports most services and methods:
+
+* Telegram
+* Email
+* Slack
+* Discord
+* Log to file
+* IFTTT
+* Home Assistant
+* OpenHab
+* System command
+* HTTP
+* Play sound
+* SMS
+
+
+**This is embarrassing...** THEN is in development! It's not ready yet but you can subscribe to the project changes.
+THEN is going to be used in the amazon dash project. THEN is being programmed for the
+`Amazon-dash <https://github.com/Nekmo/amazon-dash>`_ project (with support from 2016 and 200+ stars).
+
 
 
 To install then, run this command in your terminal:
