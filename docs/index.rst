@@ -17,6 +17,7 @@ Contents
 
    readme
    installation
+   components/index
    usage
    troubleshooting
    modules

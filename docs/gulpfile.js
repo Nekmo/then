@@ -19,6 +19,6 @@ gulp.task('make-html', function (cb) {
 });
 
 gulp.task('watch', ['browser-sync'], function () {
-    gulp.watch("*.rst", ['make-html']);
+    gulp.watch("**/*.rst", ['make-html']);
     gulp.watch("**/*.html").on('change', bs.reload);
 });

@@ -9,6 +9,11 @@ from then.exceptions import ExecuteError, ValidationError
 EXECUTE_SHELL_PARAM = '-c'
 
 
+"""Command component service
+"""
+
+
+
 def get_shell(name='bash'):
     """Absolute path to command
 
@@ -105,6 +110,15 @@ class CommandMessageBase(Message):
 
 @dataclass
 class CommandMessage(CommandMessageBase):
+    """:class:`CommandMessage` instance created by :class:`Command` component. Create It using::
+
+        from then.components import Command
+
+        message = Command().message(cmd=['ls', '-l'])
+        message.send()
+
+    :arg cmd: System Command to execute. List or string
+    """
     cmd: Union[str, list]
     component: 'Command' = None
 
@@ -122,6 +136,17 @@ class CommandBase(Component):
 
 @dataclass
 class Command(CommandBase):
+    """Create a Command instance to execute a system command::
+
+        from then.components import Command
+
+        Command(user='myuser', cwd='/home/myuser/Desktop')\\
+            .send(cmd='ls -l')
+
+    :param user: System user to use. Only available on local system
+    :param cwd: Current directory
+    :param ssh: Execute command over ssh. Syntax: ``<user>@<machine>[:<port>]``
+    """
     user: str = None
     cwd: str = None
     ssh: str = None
