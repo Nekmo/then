@@ -50,7 +50,7 @@ class Component:
             raise ProgrammingError('_message_class is undefined on {} component class.'.format(self.__class__.__name__))
         return self._message_class
 
-    def message(self, context=None, **kwargs) -> 'Message':
+    def message(self, context=None, **kwargs):
         if context is None:
             context = Context()
         context.update(**kwargs)
