@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from then.components.http import Http, HttpMessageOwnApiBase, HttpBase
+from then.components.http import HttpMessageOwnApiBase, HttpBase
 
 
 class HomeAssistantMessage(HttpMessageOwnApiBase):
@@ -12,6 +12,7 @@ class HomeAssistantMessage(HttpMessageOwnApiBase):
         message.send()
 
     :arg event: You can use any event name.
+    :arg body: Event data to send (JSON).
     """
 
     def __init__(self, event: str, body: dict = None, default_port: int = 8123, component: 'HomeAssistant' = None):

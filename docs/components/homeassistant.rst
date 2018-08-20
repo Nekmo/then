@@ -24,7 +24,7 @@ Config setup
 
 These are the **required** parameters:
 
-* **url**: Home assistant address (ip or domain) with or without protocol and port (by default ``http``
+* **url**: Home Assistant address (ip or domain) with or without protocol and port (by default ``http``
   and ``8123``). Syntax: ``[<protocol>://]<server>[:<port>]``. For example: ``https://hassio.local:1234``.
 
 These are the **optional** parameters:

@@ -12,3 +12,4 @@ Contents
    discord
    ifttt
    homeassistant
+   openhab
