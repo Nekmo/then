@@ -8,6 +8,9 @@ Excecute a local system command or execute It on a remote machine using SSH. Thi
 to run programs (like a browser, Spotify...) on the local machine or a remote machine. It also allows
 to execute bash commands and scripts.
 
+.. warning:: This component may pose a security risk. It is necessary to secure the permissions of
+             the configuration files.
+
 
 Setup for users
 ===============
