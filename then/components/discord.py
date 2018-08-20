@@ -13,6 +13,15 @@ from then.exceptions import ValidationError, ExecuteError
 
 @dataclass
 class DiscordMessage(HttpMessageApiBase):
+    """:class:`DiscordMessage` instance created by :class:`Discord` component. Create It using::
+
+        from then.components import Discord
+
+        message = Discord(...).message(body="My message")
+        message.send()
+
+    :arg body: message to send.
+    """
     body: str
     tts: bool = False
     embed: bool = None
@@ -77,6 +86,8 @@ class DiscordMessage(HttpMessageApiBase):
             super(DiscordMessage, self).send()
         except HttpException as e:
             if e.response.status_code == 400 and not self.is_connected:
+                # Discord bot requires a first login to send messages.
+                # This is not necessary the following times.
                 self.login()
                 self.connect()
                 self.send()
@@ -86,12 +97,25 @@ class DiscordMessage(HttpMessageApiBase):
 
 @dataclass
 class Discord(HttpBase):
+    """Create a Discord instance to send a message to a user or channel::
+
+        from then.components import Discord
+
+        Discord(token='NDF4NGQ5GzY6OTF3MAk2vDc1.D1xvWv.nMarFQh3UdjaDLXZZggL1xxxxxx',
+                client_id='48014601482xxxx01')\\
+            .send(body='My message body')
+
+    :param token: Your secret bot token (``NDF4NGQ5GzY6OTF3MAk2vDc1.D1xvWv.nMarFQh3UdjaDLXZZggL1xxxxxx``).
+    :param to: Channel id (``47874976890709XXXX``)
+    :param bot_token: Bookean. Token is the bot token
+    :param timeout: Connection timeout to send message.
+    """
     token: str
     to: str
     #: Get your channel ID on your url (second id): https://discordapp.com/channels/4801460148299xxxx/4801460148299xxxx
-    bot_token: bool = False
-    method = 'POST'
+    bot_token: bool = True
     timeout: int = 15
+    method = 'POST'
 
     _message_class = DiscordMessage
 

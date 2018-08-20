@@ -24,7 +24,7 @@ class SlackMessage(HttpMessageApiBase):
         message = Slack(...).message(body="My message")
         message.send()
 
-    :arg cmd: body message to send.
+    :arg body: message to send.
     """
     body: str
     url_pattern = 'https://hooks.slack.com/services/{component.team}/{component.bot}/{component.token}'

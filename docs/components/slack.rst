@@ -54,7 +54,7 @@ Message setup
 
 These are the **required** parameters:
 
-* **Body**: Message body.
+* **body**: Message body.
 
 
 Instructions for developers

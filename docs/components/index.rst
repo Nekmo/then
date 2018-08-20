@@ -9,3 +9,4 @@ Contents
    command
    email
    slack
+   discord
