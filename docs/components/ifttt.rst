@@ -1,9 +1,8 @@
 IFTTT
 #####
 
-:Component Type: Message
+:Component Type: Event
 :Requirements: None
-:Features: text
 
 Execute an IFTTT event using IFTTT Webhooks.
 

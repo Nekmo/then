@@ -11,3 +11,4 @@ Contents
    slack
    discord
    ifttt
+   homeassistant
