@@ -14,3 +14,4 @@ Contents
    homeassistant
    openhab
    http
+   audio

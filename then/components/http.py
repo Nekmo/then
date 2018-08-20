@@ -104,7 +104,6 @@ class HttpMessage(HttpMessageBase):
     component: 'Http' = None
 
 
-
 class HttpBase(Component):
     url: str = None
     method: str = 'get'
