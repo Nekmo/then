@@ -31,11 +31,33 @@ These are the **required** parameters:
 These are the **optional** parameters:
 
 * **from_**: Account used to send the email. By default *noreply@localhost*.
-* **server**: Email server sed to send the email. By default *localhost*
+* **server**: Email server used to send the email. By default *localhost*
+* **password**: Authenticate using the password. This may be required on the server/account.
+* **tls**: Start TLS mode on connect. This is recommended and mandatory on many servers.
 * **mode**: HTML or text. By default *text/plain*.
 
 
 .. note:: If you do not have a local mail server you need to configure the server.
+          THEN includes configurations for some common services.
+
+
+Pre-configured servers
+^^^^^^^^^^^^^^^^^^^^^^
+
+THEN includes default settings for these services:
+
+* Gmail
+* Yahoo!
+* Outlook/Hotmail
+
+You do not need to set the server and tls options in these services.
+
+
+**Gmail** includes extra security measures. You may need to enable access from less secure applications
+or generate an application password. More info:
+
+https://security.google.com/settings/security/apppasswords
+https://myaccount.google.com/lesssecureapps
 
 
 Message setup
