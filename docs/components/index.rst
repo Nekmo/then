@@ -10,3 +10,4 @@ Contents
    email
    slack
    discord
+   ifttt
