@@ -40,7 +40,7 @@ These are the **required** parameters:
 
 These are the **optional** parameters:
 
-* **timeout**: Connection timeout to send message.
+* **timeout**: Connection timeout to send message. By default ``15 seconds``.
 
 
 Message setup

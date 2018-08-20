@@ -90,8 +90,19 @@ class HttpMessageBase(Message):
 
 @dataclass
 class HttpMessage(HttpMessageBase):
+    """:class:`HttpMessage` instance created by :class:`Http` component. Create It using::
+
+        from then.components import Http
+
+        message = Http(...).message(body={"username": "foo"},
+                                    content_type="form")
+        message.send()
+
+    :param body: Request payload. Only if the method is ``POST``/``PUT``/``PATCH``.
+    """
     body: Union[str, dict] = None
     component: 'Http' = None
+
 
 
 class HttpBase(Component):
@@ -99,9 +110,9 @@ class HttpBase(Component):
     method: str = 'get'
     headers: {} = None
     content_type: str = None
-    timeout: int = 15
     auth: str = None
-    max_body_read: int = 10000
+    max_body_read: int = 102400
+    timeout: int = 15
 
     _message_class = None
 
@@ -122,13 +133,27 @@ class HttpBase(Component):
 
 @dataclass
 class Http(HttpBase):
+    """Create a Http instance to send a message to a user or channel::
+
+        from then.components import Http
+
+        Http(url="http://some-address/api/")\\
+            .send(body={"option": "bar"})
+
+    :param url: Home Assistant address. Syntax: ``<protocol>://<server>[:<port>]``.
+    :param headers: Headers to send to the server. ``content_type`` will be overwritten if it is defined later.
+    :param content_type: HTTP Content-Type Header on request. For example: ``text/plain``.
+    :param auth: HTTP Basic Auth. Syntax: ``<user>:<password>``.
+    :param max_body_read: Maximum size to read from the server.
+    :param timeout: Connection timeout to send message.
+    """
     url: str
     method: str = 'get'
     headers: {} = None
     content_type: str = None
     timeout: int = 15
     auth: str = None
-    max_body_read: int = 10000
+    max_body_read: int = 102400
 
     _message_class = HttpMessage
 

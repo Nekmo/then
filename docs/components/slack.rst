@@ -46,7 +46,7 @@ These are the **optional** parameters:
 * **from_**: Bot username. By default *THEN*.
 * **to**: Channel (``#other-channel``) or user (``@username``). By default configured channel.
 * **icon**: Image URL or emoticon. By default *:robot_face:*.
-* **timeout**: Connection timeout to send message.
+* **timeout**: Connection timeout to send message. By default ``15 seconds``.
 
 
 Message setup

@@ -13,3 +13,4 @@ Contents
    ifttt
    homeassistant
    openhab
+   http
