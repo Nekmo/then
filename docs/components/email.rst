@@ -1,5 +1,5 @@
 Email
-#######
+#####
 
 :Component Type: Message
 :Requirements: None
@@ -73,8 +73,6 @@ These are the **optional** parameters:
 
 Instructions for developers
 ===========================
-
-.. autoattribute:: then.components.command.Email.user
 
 .. automodule:: then.components.email
    :members: Email,EmailMessage

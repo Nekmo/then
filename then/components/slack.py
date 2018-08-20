@@ -17,6 +17,15 @@ from then.components.http import HttpBase, HttpMessageApiBase
 
 @dataclass
 class SlackMessage(HttpMessageApiBase):
+    """:class:`SlackMessage` instance created by :class:`Slack` component. Create It using::
+
+        from then.components import Slack
+
+        message = Slack(...).message(body="My message")
+        message.send()
+
+    :arg cmd: body message to send.
+    """
     body: str
     url_pattern = 'https://hooks.slack.com/services/{component.team}/{component.bot}/{component.token}'
     component: 'Slack' = None
@@ -40,6 +49,21 @@ class SlackMessage(HttpMessageApiBase):
 
 @dataclass
 class Slack(HttpBase):
+    """Create a Slack instance to send a message to a user or channel::
+
+        from then.components import Slack
+
+        Slack(team='T00000000', bot='B00000000', token='XXXXXXXXXXXXXXXXXXXXXXXX')\\
+            .send(body='My message body')
+
+    :param team: First param from Webhook
+    :param bot: Second param from Webhook
+    :param token: Third param from Webhook
+    :param from_: Bot username
+    :param to: Channel (``#other-channel``) or user (``@username``)
+    :param icon: Image URL or emoticon. By default *:robot_face:*.
+    :param timeout: Connection timeout to send message.
+    """
     team: str
     bot: str
     token: str

@@ -8,3 +8,4 @@ Contents
 
    command
    email
+   slack
