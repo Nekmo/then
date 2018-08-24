@@ -15,3 +15,4 @@ Contents
    openhab
    http
    audio
+   telegram
