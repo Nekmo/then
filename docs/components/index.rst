@@ -17,3 +17,4 @@ Contents
    audio
    telegram
    log
+   sms
