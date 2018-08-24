@@ -16,3 +16,4 @@ Contents
    http
    audio
    telegram
+   log

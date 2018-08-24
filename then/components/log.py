@@ -17,6 +17,15 @@ LEVELS = {
 
 @dataclass
 class LogMessage(Message):
+    """:class:`LogMessage` instance created by :class:`Log` component. Create It using::
+
+        from then.components import Log
+
+        message = Log().message(body="Log message")
+        message.send()
+
+    :arg body: message to log
+    """
     body: str
     level: str = 'INFO'
     component: 'Log' = None
@@ -31,10 +40,21 @@ class LogMessage(Message):
 
 @dataclass
 class Log(Component):
-    level: int = logging.DEBUG
-    formatter: str = '%(asctime)s - %(name)s - %(levelname)-7s - %(message)s'
+    """Create a Log instance to log to file or console::
+
+        from then.components import Log
+
+        Log(file="/path/to/file.log", console=True)\\
+            .send(body="Log message")
+
+    :param file: Path to log file
+    :param console: Boolean. Log to screen
+    :param formatter: Log handler formatter
+    """
     file: str = None
     console: bool = False
+    formatter: str = '%(asctime)s - %(name)s - %(levelname)-7s - %(message)s'
+    level: int = logging.DEBUG
 
     _message_class = LogMessage
 
