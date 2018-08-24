@@ -53,11 +53,12 @@ class HttpMessageBase(Message):
             self.content_type = CONTENT_TYPE_ALIASES['json']
             try:
                 self._body = json.dumps(self._body)
-            except JSONDecodeError:
+            except TypeError:
                 raise ValidationError(
                     'Error on {}: Invalid JSON body: {}'.format(self.component.name, self._body)
                 )
-        if isinstance(self._body, dict) and self.content_type != CONTENT_TYPE_ALIASES['form']:
+        if (isinstance(self._body, dict) and self.content_type != CONTENT_TYPE_ALIASES['form']) or \
+           (not isinstance(self._body, dict) and self.content_type == CONTENT_TYPE_ALIASES['form']):
             raise ValidationError(
                 'Error on {}: invalid content-type for {} (dict data type)'.format(
                     self.component.name, self._body)
@@ -155,6 +156,9 @@ class Http(HttpBase):
     max_body_read: int = 102400
 
     _message_class = HttpMessage
+
+    def message(self, context=None, **kwargs) -> HttpMessage:
+        return super(Http, self).message(context, **kwargs)
 
 
 class HttpMessageApiBase(HttpMessageBase):
