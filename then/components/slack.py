@@ -41,6 +41,7 @@ class SlackMessage(HttpMessageApiBase):
             'channel': self.component.to,
             'username': self.component.from_
         }
+        payload = {key: value for key, value in payload.items() if value is not None}
         if self.component.icon:
             icon = self.component.icon
             payload['icon_emoji' if icon.startswith(':') and icon.endswith(':') else 'icon_url'] = icon
