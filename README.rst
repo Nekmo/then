@@ -45,6 +45,7 @@ and execute actions in remote services. THEN supports most services and methods:
 * SMS
 * LINE
 * XMPP
+* Hangouts
 
 
 **This is embarrassing...** THEN is in development! It's not ready yet but you can subscribe to the project changes.
