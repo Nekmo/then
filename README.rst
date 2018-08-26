@@ -47,6 +47,7 @@ and execute actions in remote services. THEN supports most services and methods:
 * XMPP
 * Hangouts
 * BroadLink
+* Xiaomi Yeelight
 
 
 **This is embarrassing...** THEN is in development! It's not ready yet but you can subscribe to the project changes.
