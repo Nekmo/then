@@ -54,12 +54,13 @@ class Log(Component):
     file: str = None
     console: bool = False
     formatter: str = '%(asctime)s - %(name)s - %(levelname)-7s - %(message)s'
+    logger_name: str = None
     level: int = logging.DEBUG
 
     _message_class = LogMessage
 
     def __post_init__(self):
-        self.logger = logging.getLogger(uuid.uuid4().hex)
+        self.logger = logging.getLogger(self.logger_name or uuid.uuid4().hex)
         self.logger.setLevel(self.level)
         if self.console:
             self.add_handler(logging.StreamHandler())
@@ -74,3 +75,18 @@ class Log(Component):
         handler.setFormatter(formatter)
         # add handler to logger
         self.logger.addHandler(handler)
+
+    def debug(self, body):
+        self.send(body=body, level='DEBUG')
+
+    def info(self, body):
+        self.send(body=body, level='INFO')
+
+    def warning(self, body):
+        self.send(body=body, level='WARNING')
+
+    def error(self, body):
+        self.send(body=body, level='ERROR')
+
+    def critical(self, body):
+        self.send(body=body, level='CRITICAL')
