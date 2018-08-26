@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
+import requests
 from dataclasses import dataclass
-from pip._vendor import requests
 
 from then.components.base import Component, Message
 
