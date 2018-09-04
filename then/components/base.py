@@ -44,6 +44,7 @@ class TemplateBase(ItemTypes, FormatRenderMixin):
 
 class Component:
     _message_class = None
+    _use_as = None
 
     def get_class(self):
         if not self._message_class:
@@ -66,6 +67,20 @@ class Component:
 
     def send(self, context=None, **kwargs):
         return self.message(context, **kwargs).send()
+
+    def copy(self):
+        return self.__class__(**dict(self))
+
+    def use_as(self, name):
+        component = self.copy()
+        component._use_as = name
+        return component
+
+    def get_use_as(self):
+        return self._use_as or self.get_default_use_as()
+
+    def get_default_use_as(self):
+        return self.__class__.__name__.lower()
 
     @property
     def name(self):
