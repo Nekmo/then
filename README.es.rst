@@ -151,12 +151,12 @@ un archivo de configuración dicha información:
 
 .. code-block:: python
 
-    from then import Then, LoadConfig
+    from then import Then, LoadComponentConfigs
 
-    t = Then(LoadConfig('/path/to/config.json', section='components'))
+    t = Then(LoadComponentConfigs('/path/to/config.json', section='components'))
     t.context( ... )
 
-``LoadConfig`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
+``LoadComponentConfigs`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
 archivo, o usando el parámetro ``format=``), y su sección de configuración tiene una estructura cerrada:
 
 .. code-block:: json
