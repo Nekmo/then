@@ -30,6 +30,15 @@ class ProgrammingError(Exception):
 class ExecuteError(ThenError):
     pass
 
+
+class ConfigError(ThenError):
+    pass
+
+
+class UnknownConfigFormatError(ConfigError):
+    pass
+
+
 def catch(fn):
     def wrap(*args, **kwargs):
         try:
