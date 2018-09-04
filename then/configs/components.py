@@ -29,7 +29,6 @@ class LoadComponentConfigs(LoadConfigBase):
         }
     }
 
-
     def __post_init__(self):
         super().__post_init__()
         self.components = self.get_components()
@@ -48,5 +47,5 @@ class LoadComponentConfigs(LoadConfigBase):
             component = component.use_as(component_data['use_as'])
         return component
 
-    def __dict__(self):
+    def __iter__(self):
         return self.components

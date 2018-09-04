@@ -68,6 +68,7 @@ incluyéndose así una forma de poder incluir varias configuraciones y contextos
         Email(to='nekmo@localhost'),
         Telegram(token='...', to='nekmo'),
         Telegram(token='...', to='myfriend').use_as('telegram-friend'),
+    )
     t = t.context(
         FormatTemplateContext(
             subject="[{level.upper}] HDD {name} lifetime {lifetime}",
