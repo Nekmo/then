@@ -48,7 +48,7 @@ def validate_schema(data: dict, schema: Union[dict, None] = None):
 
 class LoadConfigBase:
     path: str
-    sections: str = 'components'
+    section: str = ''
     format: Union[str, None] = None
 
     data: Union[dict, None] = None
@@ -62,4 +62,8 @@ class LoadConfigBase:
                                            'Available formats: {}.'.format(format, ', '.join(FORMATS)))
         file = open_file(self.path)
         self.data = FORMATS[format](file)
+        if not isinstance(self.data, dict):
+            raise ConfigError('Invalid config data type: {}. Current data: {}'.format(type(self.data), self.data))
+        if self.section:
+            self.data = self.data[self.section]
         validate_schema(self.data, self.schema)
