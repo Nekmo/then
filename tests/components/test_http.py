@@ -10,7 +10,7 @@ from then.components.http import Http
 from then.exceptions import ValidationError, ExecuteError
 
 
-class TestExecuteUrl(unittest.TestCase):
+class TestHttp(unittest.TestCase):
     no_body_methods = ['get', 'head', 'delete', 'connect', 'options', 'trace']
     url = 'http://domain.com'
 

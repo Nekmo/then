@@ -6,7 +6,7 @@ from then.components.http import CONTENT_TYPE_ALIASES
 from then.components.slack import Slack, SlackMessage
 
 
-class TestExecuteUrl(TestHttpMessageApiMixIn, unittest.TestCase):
+class TestSlack(TestHttpMessageApiMixIn, unittest.TestCase):
     team = 'T00000000'
     bot = 'B00000000'
     token = 'XXXXXXXXXXXXXXXXXXXXXXXX'
