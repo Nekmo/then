@@ -36,7 +36,7 @@ class DiscordMessage(HttpMessageApiBase):
             r = requests.get(self.url_pattern.format('users/@me'), headers=self.component.get_headers())
             r.raise_for_status()
         except RequestException as e:
-            if r and r.status_code == 401:
+            if r is not None and r.status_code == 401:
                 raise ValidationError('Improper token has been passed.') from e
             else:
                 raise ExecuteError('Unknown error on {}: {}'.format(self.component.name, e))
@@ -102,7 +102,7 @@ class Discord(HttpBase):
         from then.components import Discord
 
         Discord(token='NDF4NGQ5GzY6OTF3MAk2vDc1.D1xvWv.nMarFQh3UdjaDLXZZggL1xxxxxx',
-                client_id='48014601482xxxx01')\\
+                to='48014601482xxxx01')\\
             .send(body='My message body')
 
     :param token: Your secret bot token (``NDF4NGQ5GzY6OTF3MAk2vDc1.D1xvWv.nMarFQh3UdjaDLXZZggL1xxxxxx``).
