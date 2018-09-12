@@ -50,3 +50,4 @@ class OpenHab(HttpBase):
     timeout: int = 15
     method: str = 'post'
     content_type: str = 'text/plain'
+    _message_class = OpenHabMessage
