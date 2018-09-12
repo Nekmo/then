@@ -14,6 +14,8 @@ class LineMessage(HttpMessageApiBase):
         message.send()
 
     :arg body: message to send.
+    :arg sticker_id: sticker to send. package_id is required.
+    :arg package_id: message to send. sticker_id is required.
     """
     body: str
     sticker_id: int = None
