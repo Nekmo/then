@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from then.components.http import HttpMessageOwnApiBase, HttpBase
 
 
+@dataclass
 class HomeAssistantMessage(HttpMessageOwnApiBase):
     """:class:`HomeAssistantMessage` instance created by :class:`HomeAssistant` component. Create It using::
 
@@ -14,13 +15,10 @@ class HomeAssistantMessage(HttpMessageOwnApiBase):
     :arg event: You can use any event name.
     :arg body: Event data to send (JSON).
     """
-
-    def __init__(self, event: str, body: dict = None, default_port: int = 8123, component: 'HomeAssistant' = None):
-        self.event = event
-        self.body = body
-        self.default_port = default_port
-        self.component = component
-        self.__post_init__()
+    event: str
+    body: dict = None
+    default_port: int = 8123
+    component: 'HomeAssistant' = None
 
     def get_url(self):
         """Home assistant url
