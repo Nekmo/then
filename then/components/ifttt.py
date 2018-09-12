@@ -18,6 +18,13 @@ class IftttMessage(HttpMessageApiBase):
     url_pattern = 'https://maker.ifttt.com/trigger/{event}/with/key/{component.key}'
     component: 'Ifttt' = None
 
+    def get_body(self):
+        return self.extra
+
+    def send(self):
+        self._body = self.update_body(self.get_body())
+        super().send()
+
 
 @dataclass
 class Ifttt(HttpBase):
@@ -32,6 +39,7 @@ class Ifttt(HttpBase):
     :param timeout: Connection timeout to send message.
     """
     key: str
+    method = 'post'
     timeout: int = 15
 
     _message_class = IftttMessage

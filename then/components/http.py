@@ -41,28 +41,31 @@ class HttpMessageBase(Message):
     component: 'Http' = None
 
     def __post_init__(self):
-        self._body = self.get_body()
         self.content_type = self.component.content_type
-        if (self.content_type or self._body) and self.component.method not in CONTENT_TYPE_METHODS:
+        self._body = self.update_body(self.get_body())
+
+    def update_body(self, body):
+        if (self.content_type or body) and self.component.method not in CONTENT_TYPE_METHODS:
             raise ValidationError(
                 'Error on {}: The body/content-type option only can be used with the {} methods.'.format(
                     self.component.name, ', '.join(CONTENT_TYPE_METHODS)
                 ))
-        if isinstance(self._body, dict) and (self.content_type == CONTENT_TYPE_ALIASES['json'] or
+        if isinstance(body, dict) and (self.content_type == CONTENT_TYPE_ALIASES['json'] or
                                              not self.content_type):
             self.content_type = CONTENT_TYPE_ALIASES['json']
             try:
-                self._body = json.dumps(self._body)
+                body = json.dumps(body)
             except TypeError:
                 raise ValidationError(
-                    'Error on {}: Invalid JSON body: {}'.format(self.component.name, self._body)
+                    'Error on {}: Invalid JSON body: {}'.format(self.component.name, body)
                 )
-        if (isinstance(self._body, dict) and self.content_type != CONTENT_TYPE_ALIASES['form']) or \
-           (not isinstance(self._body, dict) and self.content_type == CONTENT_TYPE_ALIASES['form']):
+        if (isinstance(body, dict) and self.content_type != CONTENT_TYPE_ALIASES['form']) or \
+           (not isinstance(body, dict) and self.content_type == CONTENT_TYPE_ALIASES['form']):
             raise ValidationError(
                 'Error on {}: invalid content-type for {} (dict data type)'.format(
-                    self.component.name, self._body)
+                    self.component.name, body)
             )
+        return body
 
     def get_url(self):
         return self.component.url
