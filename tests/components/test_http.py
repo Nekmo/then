@@ -15,7 +15,7 @@ class TestHttp(unittest.TestCase):
     url = 'http://domain.com'
 
     def setUp(self):
-        super(TestExecuteUrl, self).setUp()
+        super().setUp()
         self.session_mock = requests_mock.Mocker()
         self.session_mock.start()
         self.get_mock = self.session_mock.get(self.url)
@@ -98,5 +98,5 @@ class TestHttp(unittest.TestCase):
         Http(self.url, method='post', auth='foo:bar').send()
 
     def tearDown(self):
-        super(TestExecuteUrl, self).tearDown()
+        super().tearDown()
         self.session_mock.stop()
