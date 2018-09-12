@@ -15,7 +15,7 @@ then
   :target: https://pypi.org/project/then/
   :alt: Python versions
 
-.. image:: https://img.shields.io/codeclimate/github/Nekmo/then.svg?style=flat-square
+.. image:: https://img.shields.io/codeclimate/maintainability/Nekmo/then.svg?style=flat-square
   :target: https://codeclimate.com/github/Nekmo/then
   :alt: Code Climate
 
