@@ -15,7 +15,7 @@ class LineMessage(HttpMessageApiBase):
 
     :arg body: message to send.
     """
-    body: str = None
+    body: str
     sticker_id: int = None
     package_id: int = None
     url_pattern = 'https://notify-api.line.me/api/notify'
