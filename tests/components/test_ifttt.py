@@ -1,9 +1,9 @@
+import json
 import unittest
 
 from tests.components.http_base import TestHttpMessageApiMixIn
 from then.components.http import CONTENT_TYPE_ALIASES
 from then.components.ifttt import Ifttt, IftttMessage
-from then.exceptions import ValidationError
 
 
 class TestIfttt(TestHttpMessageApiMixIn, unittest.TestCase):
@@ -16,5 +16,15 @@ class TestIfttt(TestHttpMessageApiMixIn, unittest.TestCase):
     def test_send(self):
         ifttt = self.get_component()
         message: IftttMessage = ifttt.message(event=self.event)
-        self.session_mock.get(IftttMessage.url_pattern.format(event=self.event, component=ifttt))
+        self.session_mock.post(IftttMessage.url_pattern.format(event=self.event, component=ifttt))
+        message.send()
+
+    def test_send_ingredients(self):
+        ifttt = self.get_component()
+        body = dict(value1='foo')
+        message: IftttMessage = ifttt.message(event=self.event, **body)
+        req_text = json.dumps(body)
+        self.session_mock.post(IftttMessage.url_pattern.format(event=self.event, component=ifttt),
+                               request_headers={'Content-Type': CONTENT_TYPE_ALIASES['json']},
+                               additional_matcher=lambda req: req.text == req_text                               )
         message.send()
