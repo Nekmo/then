@@ -19,3 +19,4 @@ Contents
    log
    sms
    line
+   googlechat

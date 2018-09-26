@@ -36,8 +36,8 @@ class GoogleChat(HttpBase):
                  to='AAAAqkJxxxx')\\
             .send(body='My message')
 
-    :param key: GoogleChat Chat Webhook key.
-    :param token: GoogleChat Chat Webhook token.
+    :param key: GoogleChat Webhook key.
+    :param token: GoogleChat Webhook token.
     :param to: Space ID
     """
     key: str
