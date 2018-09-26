@@ -25,7 +25,7 @@ __all__ = [
     'HomeAssistant',
     'Audio',
     'Discord',
-    'Hangouts',
+    'GoogleChat',
     'Http',
     'Ifttt',
     'Line',

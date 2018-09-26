@@ -4,12 +4,12 @@ from then.components.http import HttpBase, HttpMessageApiBase
 
 
 @dataclass
-class HangoutsMessage(HttpMessageApiBase):
-    """:class:`HangoutsMessage` instance created by :class:`Hangouts` component. Create It using::
+class GoogleChatMessage(HttpMessageApiBase):
+    """:class:`GoogleChatMessage` instance created by :class:`GoogleChat` component. Create It using::
 
-        from then.components import Hangouts
+        from then.components import GoogleChat
 
-        message = Hangouts(...).message(body="My message")
+        message = GoogleChat(...).message(body="My message")
         message.send()
 
     :arg body: message to send.
@@ -17,7 +17,7 @@ class HangoutsMessage(HttpMessageApiBase):
     body: str
     url_pattern = 'https://chat.googleapis.com/v1/spaces/{component.to}/' \
                   'messages?key={component.key}&token={component.token}'
-    component: 'Hangouts' = None
+    component: 'GoogleChat' = None
 
     def get_body(self):
         return {
@@ -26,18 +26,18 @@ class HangoutsMessage(HttpMessageApiBase):
 
 
 @dataclass
-class Hangouts(HttpBase):
-    """Create a Hangouts instance to send a message to a group::
+class GoogleChat(HttpBase):
+    """Create a GoogleChat instance to send a message to a group::
 
-        from then.components import Hangouts
+        from then.components import GoogleChat
 
-        Hangouts(account='AIzaSfDdI7hChtE6zyS6Mm-WefRa3Cpzqlqxxxx',
+        GoogleChat(account='AIzaSfDdI7hChtE6zyS6Mm-WefRa3Cpzqlqxxxx',
                  token='IWccInfAQhPSrkOVgVSzh07W9hBzp9eCqjQzTB_xxxxxxx',
                  to='AAAAqkJxxxx')\\
             .send(body='My message')
 
-    :param key: Hangouts Chat Webhook key.
-    :param token: Hangouts Chat Webhook token.
+    :param key: GoogleChat Chat Webhook key.
+    :param token: GoogleChat Chat Webhook token.
     :param to: Space ID
     """
     key: str
@@ -46,4 +46,4 @@ class Hangouts(HttpBase):
     timeout: int = 15
     method = 'POST'
 
-    _message_class = HangoutsMessage
+    _message_class = GoogleChatMessage
