@@ -6,7 +6,7 @@ from .command import Command, CommandMessage
 from .homeassistant import HomeAssistant, HomeAssistantMessage
 from .audio import Audio, AudioMessage
 from .discord import Discord, DiscordMessage
-from .hangouts import Hangouts, HangoutsMessage
+from .googlechat import GoogleChat, GoogleChatMessage
 from .http import Http, HttpMessage
 from .ifttt import Ifttt, IftttMessage
 from .line import Line, LineMessage

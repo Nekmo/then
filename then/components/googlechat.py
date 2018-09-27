@@ -31,7 +31,7 @@ class GoogleChat(HttpBase):
 
         from then.components import GoogleChat
 
-        GoogleChat(account='AIzaSfDdI7hChtE6zyS6Mm-WefRa3Cpzqlqxxxx',
+        GoogleChat(key='AIzaSfDdI7hChtE6zyS6Mm-WefRa3Cpzqlqxxxx',
                  token='IWccInfAQhPSrkOVgVSzh07W9hBzp9eCqjQzTB_xxxxxxx',
                  to='AAAAqkJxxxx')\\
             .send(body='My message')
