@@ -45,7 +45,7 @@ and execute actions in remote services. THEN supports most services and methods:
 * SMS
 * LINE
 * XMPP
-* Hangouts
+* Google Chat
 * BroadLink
 * Xiaomi Yeelight
 
