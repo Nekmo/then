@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from tests.components.http_base import TestHttpMessageApiMixIn, form_to_dict
+from tests.components.http_base import TestHttpMessageApiMixIn
 from then.components.http import CONTENT_TYPE_ALIASES
 from then.components.telegram import Telegram, TelegramMessage
 
