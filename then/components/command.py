@@ -170,7 +170,7 @@ class PathComponent(Component):
 
     def _availables(self, value, name, availables):
         new_action = value.lower()
-        if new_action not in self._actions:
+        if new_action not in availables:
             raise ConfigError('Invalid {} in {}: {}. Availables: {}'.format(
                 name, self.__class__.__name__, value, ', '.join(availables)
             ))
@@ -196,7 +196,10 @@ class PathMessage(Message):
         elif self.component._action == 'ordered':
             return sorted(self.list_directory())
         elif self.component._action == 'shuffle':
-            return random.shuffle(self.list_directory())
+            files = self.list_directory()
+            random.shuffle(files)
+            return files
+
 
     def get_next(self, on_end=None):
         if self._files is None:
@@ -214,6 +217,3 @@ class PathMessage(Message):
     def list_directory(self):
         return [str(path.resolve()) for path
                 in Path(self.path).glob(self.component.pattern) if path.is_file()]
-
-    def send(self):
-        raise NotImplementedError
