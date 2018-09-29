@@ -1,15 +1,12 @@
 from __future__ import absolute_import
 
-import requests
 from dataclasses import dataclass
 
-from then.components.base import Component, Message
-
-TELEGRAM_API_URL = 'https://api.telegram.org/bot{token}/{method}'
+from then.components.http import HttpMessageApiBase, HttpBase
 
 
 @dataclass
-class TelegramMessage(Message):
+class TelegramMessage(HttpMessageApiBase):
     """:class:`TelegramMessage` instance created by :class:`Telegram` component. Create It using::
 
         from then.components import Telegram
@@ -21,14 +18,17 @@ class TelegramMessage(Message):
     """
     body: str
     component: 'Telegram' = None
+    url_pattern = 'https://api.telegram.org/bot{component.token}/{component.send_method}'
 
-    def send(self):
-        requests.post(TELEGRAM_API_URL.format(token=self.component.token, method='sendMessage'),
-                      data={'chat_id': self.component.to, 'text': self.body})
+    def get_body(self):
+        return {
+            'chat_id': self.component.to,
+            'text': self.body
+        }
 
 
 @dataclass
-class Telegram(Component):
+class Telegram(HttpBase):
     """Create a Telegram instance to send a message to a user or group::
 
         from then.components import Telegram
@@ -42,5 +42,8 @@ class Telegram(Component):
     """
     token: str
     to: str
+    send_method: str = 'sendMessage'
+    timeout: int = 15
+    method = 'POST'
 
     _message_class = TelegramMessage
