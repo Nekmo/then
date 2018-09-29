@@ -157,7 +157,7 @@ class Command(CommandBase):
     _message_class = CommandMessage
 
 
-class PathComponent(Component):
+class PathBase(Component):
     action: str = 'ordered'
     pattern: str = '*'
     on_end: str = 'repeat'
@@ -183,9 +183,9 @@ class PathComponent(Component):
         return self._availables(self.on_end, 'on_end', self._on_ends)
 
 
-class PathMessage(Message):
+class PathMessageBase(Message):
     path: str
-    component: PathComponent = None
+    component: PathBase = None
     _files = None
 
     def get_files(self):

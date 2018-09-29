@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from then.components.command import CommandMessageBase, CommandBase, PathComponent, PathMessage
+from then.components.command import CommandMessageBase, CommandBase, PathBase, PathMessageBase
 
 
 @dataclass
-class AudioMessage(PathMessage, CommandMessageBase):
+class AudioMessage(PathMessageBase, CommandMessageBase):
     """:class:`AudioMessage` instance created by :class:`Audio` component. Create It using::
 
         from then.components import Audio
@@ -22,7 +22,7 @@ class AudioMessage(PathMessage, CommandMessageBase):
 
 
 @dataclass
-class Audio(PathComponent, CommandBase):
+class Audio(PathBase, CommandBase):
     """Create a Audio instance to send a message to a user or channel::
 
         from then.components import Audio
