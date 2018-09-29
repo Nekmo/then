@@ -1,10 +1,13 @@
+import os
+import random
 import subprocess
+from pathlib import Path
 from typing import Union
 
 from dataclasses import dataclass
 
 from then.components.base import Component, Message
-from then.exceptions import ExecuteError, ValidationError
+from then.exceptions import ExecuteError, ValidationError, ConfigError
 
 EXECUTE_SHELL_PARAM = '-c'
 
@@ -153,3 +156,64 @@ class Command(CommandBase):
 
     _message_class = CommandMessage
 
+
+class PathComponent(Component):
+    action: str = 'ordered'
+    pattern: str = '*'
+    on_end: str = 'repeat'
+    _actions = ['ordered', 'shuffle']
+    _on_ends = ['stop', 'repeat']
+
+    def __post_init__(self):
+        self._action = self.get_action()
+        self._on_end = self.get_on_end()
+
+    def _availables(self, value, name, availables):
+        new_action = value.lower()
+        if new_action not in self._actions:
+            raise ConfigError('Invalid {} in {}: {}. Availables: {}'.format(
+                name, self.__class__.__name__, value, ', '.join(availables)
+            ))
+        return new_action
+
+    def get_action(self):
+        return self._availables(self.action, 'action', self._actions)
+
+    def get_on_end(self):
+        return self._availables(self.on_end, 'on_end', self._on_ends)
+
+
+class PathMessage(Message):
+    path: str
+    component: PathComponent = None
+    _files = None
+
+    def get_files(self):
+        if not os.path.lexists(self.path):
+            raise ConfigError('{} path does not exists.'.format(self.path))
+        if os.path.isfile(self.path):
+            return [self.path]
+        elif self.component._action == 'ordered':
+            return sorted(self.list_directory())
+        elif self.component._action == 'shuffle':
+            return random.shuffle(self.list_directory())
+
+    def get_next(self, on_end=None):
+        if self._files is None:
+            self._files = self.get_files()
+        on_end = on_end or self.component._on_end
+        try:
+            return self._files.pop(0)
+        except IndexError:
+            if on_end == 'stop':
+                raise StopIteration
+            elif on_end == 'repeat':
+                self._files = None
+                return self.get_next('stop')
+
+    def list_directory(self):
+        return [str(path.resolve()) for path
+                in Path(self.path).glob(self.component.pattern) if path.is_file()]
+
+    def send(self):
+        raise NotImplementedError
