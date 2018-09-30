@@ -7,6 +7,9 @@ from then.components.base import Component, Message, split_host_port
 from then.exceptions import ExecuteError
 
 
+GOOGLE_SERVER = ('talk.google.com', 5222)
+
+
 class SendMsgBot(sleekxmpp.ClientXMPP):
     def __init__(self, jid, password, recipient, message):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
@@ -72,7 +75,7 @@ class XmppMessage(Message):
         if self.component.server:
             server = split_host_port(self.component.server, 5222)
         elif self.component.from_.endswith('@gmail.com'):
-            server = ('talk.google.com', 5222)
+            server = GOOGLE_SERVER
         else:
             server = ()
         if xmpp.connect(server):
