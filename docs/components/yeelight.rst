@@ -2,7 +2,7 @@ Yeelight
 ########
 
 :Component Type: Message
-:Requirements: None
+:Requirements: python-yeelight
 :Features: other
 
 Control a local Xiaomi Yeelight bulb.
@@ -67,7 +67,7 @@ These are the **optional** parameters:
 * **flow_sleep**: time in milliseconds. Only available in marked *flow_transition*.
 
 The *flow transitions* are courtesy of
-`Python Yeelight Project <https://yeelight.readthedocs.io/en/stable/index.html>`_. 
+`Python Yeelight Project <https://yeelight.readthedocs.io/en/stable/index.html>`_.
 
 
 Instructions for developers
