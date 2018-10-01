@@ -20,3 +20,4 @@ Contents
    sms
    line
    googlechat
+   xmpp

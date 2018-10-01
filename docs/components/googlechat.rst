@@ -5,7 +5,8 @@ Google Chat
 :Requirements: None
 :Features: text
 
-Send a Google Chat group message using Webhooks.
+Send a Google Chat group message using Webhooks. This component does not work
+for GTalk/Hangouts. You need to use the xmpp component.
 
 
 Setup for users
