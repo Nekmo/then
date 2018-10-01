@@ -9,7 +9,7 @@ from unittest.mock import patch
 from then.components import Yeelight
 
 
-class TestAudio(unittest.TestCase):
+class TestYeelight(unittest.TestCase):
 
     def setUp(self):
         self.patch_bulb = patch('yeelight.Bulb')
