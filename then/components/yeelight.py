@@ -34,7 +34,7 @@ class YeelightMessage(Message):
 
         from then.components import Yeelight
 
-        message = Yeelight(...).message(packet="...")
+        message = Yeelight(...).message(state='TOGGLE')
         message.send()
 
     :arg state: ON|OFF|TOGGLE state. By default ON.

@@ -21,3 +21,4 @@ Contents
    line
    googlechat
    xmpp
+   yeelight
