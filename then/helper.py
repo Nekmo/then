@@ -2,6 +2,29 @@ from then.configs.components import LoadComponentConfigs
 from then.exceptions import ThenError
 
 
+class Contexts:
+    _use = 'default'
+
+    def __init__(self, then, *args):
+        self.then = then
+        self.contexts = args
+        self._args = {}
+
+    def args(self, **kwargs):
+        self._args = kwargs
+
+    def use(self, use_name):
+        contexts = self.copy()
+        contexts._use = use_name
+        return contexts
+
+    def copy(self):
+        contexts = Contexts(self.then, *self.contexts)
+        contexts._args = self._args
+        contexts._use = self._use
+        return contexts
+
+
 class Then:
     def __init__(self, *args):
         if not args:
@@ -15,3 +38,6 @@ class Then:
         self.components = {}
         for component in components_list:
             self.components[component.get_use_as()] = component
+
+    def contexts(self, *args):
+        return Contexts(self, *args)

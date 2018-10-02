@@ -64,19 +64,19 @@ incluyéndose así una forma de poder incluir varias configuraciones y contextos
     from then.components import Email, Telegram
 
 
-    t = Then(
+    then = Then(
         Email(to='nekmo@localhost'),
         Telegram(token='...', to='nekmo'),
         Telegram(token='...', to='myfriend').use_as('telegram-friend'),
     )
-    t = t.context(
+    contexts = then.contexts(
         FormatTemplateContext(
             subject="[{level.upper}] HDD {name} lifetime {lifetime}",
             body="Hello {user},\nThis is the latest monitoring result: {result}"
         ).context_as('default'),
         GetContext('default').join(body=['subject', 'body']).context_as('default@telegram'),
     )
-    message = t.args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+    message = contexts.args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
     message.use('telegram-friend').send()
 
 
@@ -154,8 +154,8 @@ un archivo de configuración dicha información:
 
     from then import Then, LoadComponentConfigs
 
-    t = Then(LoadComponentConfigs('/path/to/config.json', section='components'))
-    t.context( ... )
+    then = Then(LoadComponentConfigs('/path/to/config.json', section='components'))
+    then.contexts( ... )
 
 ``LoadComponentConfigs`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
 archivo, o usando el parámetro ``format=``), y su sección de configuración tiene una estructura cerrada:
@@ -203,6 +203,7 @@ fichero de configuración. La función ``from_config`` permite de nuevo este uso
     from then.components.telegram import TelegramTemplate
 
 
+    # TODO: desactualizado
     t = Then(...)
     t = t.context(
         FormatTemplateContext(
