@@ -44,6 +44,6 @@ class Telegram(HttpBase):
     to: str
     send_method: str = 'sendMessage'
     timeout: int = 15
-    method = 'POST'
+    method: str = 'POST'
 
     _message_class = TelegramMessage

@@ -55,7 +55,7 @@ class Component:
         context.update(**kwargs)
         cls = self.get_class()
         if cls._default_init:
-            fields = cls.__dataclass_fields__
+            fields = self.get_fields()
             msg_ctx = {key: context[key] for key in fields if key != 'component' and key in context}
             message = cls(component=self, **msg_ctx)
             message.add_extra({key: context[key] for key in context if key not in fields})
@@ -67,7 +67,7 @@ class Component:
         return self.message(context, **kwargs).send()
 
     def copy(self):
-        return self.__class__(**vars(self))
+        return self.__class__(**{key: value for key, value in vars(self).items() if key in self.get_fields()})
 
     def use_as(self, name):
         component = self.copy()
@@ -83,6 +83,10 @@ class Component:
     @property
     def name(self):
         return self.__class__.__name__
+
+    @classmethod
+    def get_fields(cls):
+        return cls.__dataclass_fields__
 
 
 class Message:
