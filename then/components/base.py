@@ -55,7 +55,7 @@ class Component:
         context.update(**kwargs)
         cls = self.get_class()
         if cls._default_init:
-            fields = self.get_fields()
+            fields = cls.__dataclass_fields__
             msg_ctx = {key: context[key] for key in fields if key != 'component' and key in context}
             message = cls(component=self, **msg_ctx)
             message.add_extra({key: context[key] for key in context if key not in fields})
