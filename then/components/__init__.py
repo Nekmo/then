@@ -39,4 +39,4 @@ __all__ = [
 
 def get_component_by_name(name: str):
     name = name.lower()
-    return getattr(globals(), {component_name.lower(): component_name for component_name in __all__}[name])
+    return globals()[{component_name.lower(): component_name for component_name in __all__}[name]]

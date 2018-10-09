@@ -67,7 +67,7 @@ class Component:
         return self.message(context, **kwargs).send()
 
     def copy(self):
-        return self.__class__(**dict(self))
+        return self.__class__(**vars(self))
 
     def use_as(self, name):
         component = self.copy()
