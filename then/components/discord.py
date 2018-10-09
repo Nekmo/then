@@ -5,7 +5,6 @@ import sys
 import requests
 from dataclasses import dataclass
 from requests import RequestException
-from websocket import create_connection
 
 from then.components.http import HttpBase, HttpMessageApiBase, HttpException
 from then.exceptions import ValidationError, ExecuteError
@@ -43,6 +42,8 @@ class DiscordMessage(HttpMessageApiBase):
         self.is_connected = True
 
     def create_gateway(self):
+        from websocket import create_connection
+
         r = requests.get(self.url_pattern.format('gateway'), headers=self.component.get_headers())
         self.gateway = create_connection(r.json()['url'] + '?encoding=json&v=6')
 
