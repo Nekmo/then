@@ -5,7 +5,8 @@
 import unittest
 from unittest.mock import patch, ANY
 
-from then.components.xmpp import Xmpp, SendMsgBot, GOOGLE_SERVER
+from then.components.xmpp import Xmpp, GOOGLE_SERVER
+from then.components.xmpp.send_msg import SendMsgBot
 from then.exceptions import ExecuteError
 
 FROM: str = 'account1@gmail.com'
@@ -20,10 +21,10 @@ class TestSendMsgBot(unittest.TestCase):
     to: str = TO
     body: str = BODY
 
-    @patch('then.components.xmpp.SendMsgBot.send_presence', autospec=True)
-    @patch('then.components.xmpp.SendMsgBot.get_roster', autospec=True)
-    @patch('then.components.xmpp.SendMsgBot.send_message', autospec=True)
-    @patch('then.components.xmpp.SendMsgBot.disconnect', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.send_presence', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.get_roster', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.send_message', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.disconnect', autospec=True)
     def test_start(self, m1, m2, m3, m4):
         send_msg_bot = SendMsgBot(self.from_, self.password, self.to, self.body)
         send_msg_bot.start(None)
@@ -42,28 +43,28 @@ class TestXmpp(unittest.TestCase):
     def get_component(self, **kwargs):
         return Xmpp(self.from_, self.password, self.to, **kwargs)
 
-    @patch('then.components.xmpp.SendMsgBot.connect', autospec=True, return_value=True)
-    @patch('then.components.xmpp.SendMsgBot.process', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.connect', autospec=True, return_value=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.process', autospec=True)
     def test_send(self, m1, m2):
         self.get_component().send(body=self.body)
         m2.assert_called_once_with(ANY, GOOGLE_SERVER)
         m1.assert_called_once()
 
-    @patch('then.components.xmpp.SendMsgBot.connect', autospec=True, return_value=True)
-    @patch('then.components.xmpp.SendMsgBot.process', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.connect', autospec=True, return_value=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.process', autospec=True)
     def test_server(self, m1, m2):
         self.get_component(server='server:9999').send(body=self.body)
         m2.assert_called_once_with(ANY, ['server', 9999])
         m1.assert_called_once()
 
-    @patch('then.components.xmpp.SendMsgBot.connect', autospec=True, return_value=True)
-    @patch('then.components.xmpp.SendMsgBot.process', autospec=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.connect', autospec=True, return_value=True)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.process', autospec=True)
     def test_auto_server(self, m1, m2):
         Xmpp('foo@server', self.password, self.to).send(body=self.body)
         m2.assert_called_once_with(ANY, ())
         m1.assert_called_once()
 
-    @patch('then.components.xmpp.SendMsgBot.connect', autospec=True, return_value=False)
+    @patch('then.components.xmpp.send_msg.SendMsgBot.connect', autospec=True, return_value=False)
     def test_connect_error(self, m1):
         with self.assertRaises(ExecuteError):
             self.get_component().send(body=self.body)
