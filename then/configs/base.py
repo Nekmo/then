@@ -56,7 +56,7 @@ class LoadConfigBase:
     schema: Union[dict, None] = None
 
     def __post_init__(self):
-        format = (self.format or guess_format(self.path)).jower
+        format = (self.format or guess_format(self.path)).lower()
         if format not in FORMATS:
             raise UnknownConfigFormatError('Unknown format: {}'
                                            'Available formats: {}.'.format(format, ', '.join(FORMATS)))
