@@ -13,7 +13,6 @@ from then.components.base import Component, Message
 from then.exceptions import ValidationError, ExecuteError
 from then.components.log import Log
 
-import broadlink
 
 
 logger = Log(logger_name='broadlink', console=True)
@@ -64,6 +63,8 @@ class BroadLinkMessage(Message):
     component: 'BroadLink' = None
 
     def get_device(self):
+        import broadlink
+
         if self.component.ip and self.component._mac:
             device = broadlink.rm((self.component.ip, 80), self.component._mac, None)
         else:
