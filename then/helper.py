@@ -33,8 +33,9 @@ class Then:
         components_list = []
         for arg in args:
             if isinstance(arg, LoadComponentConfigs):
-                components_list.extend(list(args))
-            components_list.append(arg)
+                components_list.extend(list(arg))
+            else:
+                components_list.append(arg)
         self.components = {}
         for component in components_list:
             self.components[component.get_use_as()] = component

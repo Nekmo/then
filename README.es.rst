@@ -13,15 +13,15 @@ Ejemplo básico
 
 .. code-block:: python
 
-    from them import Context
+    from them import Params
     from then.components import Email
 
-    context = Context(
+    params = Params(
         subject='[ERROR] HDD SATAIII Barracuda lifetime 10%',
         body="Hello Nekmo,\nThis is the latest monitoring result: ..."
     )
     email = Email(to='nekmo@localhost')
-    email.send(context)
+    email.send(params)
 
 
 O simplificado:
@@ -36,63 +36,65 @@ O simplificado:
 Templates
 =========
 
-Como en muchas ocasiones los mensajes no son estáticos, es posible generar el contexto con templates:
+Como en muchas ocasiones los mensajes no son estáticos, es posible generar el paramo con templates:
 
 .. code-block:: python
 
-    from them.templates import FormatTemplateContext
+    from them.templates import FormatTemplateParams
     from then.components import Email
 
-    context = FormatTemplateContext(
+    params = FormatTemplateParams(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello {user},\nThis is the latest monitoring result: {result}"
     ).args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
     email = Email(to='nekmo@localhost')
-    email.send(context)
+    email.send(params)
 
 
 Múltiples servicios
 ===================
 
 No obstante, si queremos tener varios métodos de envío (como es la idea tras THEN) esta forma deja de ser eficiente,
-incluyéndose así una forma de poder incluir varias configuraciones y contextos:
+incluyéndose así una forma de poder incluir varias configuraciones y params:
 
 .. code-block:: python
 
     from then import Then
-    from them.templates import FormatTemplateContext
+    from them.templates import FormatTemplateParams
     from then.components import Email, Telegram
 
 
     then = Then(
         Email(to='nekmo@localhost'),
         Telegram(token='...', to='nekmo'),
-        Telegram(token='...', to='myfriend').use_as('telegram-friend'),
+        Telegram(token='...', to='myfriend').use_as('telegram-friend'),  # use_as -> config_as
     )
-    contexts = then.contexts(
-        FormatTemplateContext(
+    params = then.params(  # Params?
+        FormatTemplateParams(  # FormatTemplateParams?
             subject="[{level.upper}] HDD {name} lifetime {lifetime}",
             body="Hello {user},\nThis is the latest monitoring result: {result}"
-        ).context_as('default'),
-        GetContext('default').join(body=['subject', 'body']).context_as('default@telegram'),
+        ).params_as('default'),
+        GetContext('default').join(body=['subject', 'body']).params_as('default@telegram'),
     )
-    message = contexts.args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+
+    message = params.render(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+    # use('<config>@<params>')
     message.use('telegram-friend').send()
 
 
-Los servicios por defecto reciben el nombre de contexto "default", y se aplicará a todos los componentes que sea
+Los servicios por defecto reciben el nombre de paramo "default", y se aplicará a todos los componentes que sea
 posible, salvo que se defina uno usando arroba y a continuación el nombre del componente. El valor tras arroba
 puede ser el nombre del componente con "use_as", o el nombre de la clase del componente. Es posible definir varios
 valores para el método, como en el siguiente ejemplo::
 
-    .context_as('default@telegram', 'default@email')
+    .params_as('default@telegram', 'default@email')
 
 O de la siguiente forma::
 
-    .context_as(name='default', components=['telegram', 'email'])
+    .params_as(name='default', components=['telegram', 'email'])
 
 Puede haber varios default, incluso sin definir el componente. En tal caso, THEN escogerá el que mejor se adapte al
-componente según las variables disponibles. Por ejemplo, si Telegram requiere "body", y 2 contextos por defecto
+componente según las variables disponibles. Por ejemplo, si Telegram requiere "body", y 2 paramos por defecto
 ofrecen dicha variable, pero una de ellas ofrece además subject, la cual no requiere Telegram, entonces usará la que
 no tiene subject.
 
@@ -100,7 +102,7 @@ no tiene subject.
 Pipe
 ====
 
-Los pipe permiten transformar los contextos para adecuarse a las necesidades de otro componente. Permiten copiar
+Los pipe permiten transformar los paramos para adecuarse a las necesidades de otro componente. Permiten copiar
 variables y transformar las variables existentes.
 
 Ejemplo para convertir un template HTML a uno de texto plano
@@ -108,26 +110,26 @@ Ejemplo para convertir un template HTML a uno de texto plano
 .. code-block:: python
 
     from them.pipes import Html2Plain
-    from them.templates import FormatTemplateContext
+    from them.templates import FormatTemplateParams
 
-    context = FormatTemplateContext(
+    param = FormatTemplateParams(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello <strong>{user}</strong>,\nThis is the latest monitoring result: <code>{result}</code>"
     )
-    context2 = context.pipe(body=Html2Plain('body'))
+    param2 = param.pipe(body=Html2Plain('body'))
 
 
 Copiar variable body en description:
 
 .. code-block:: python
 
-    from them.templates import FormatTemplateContext
+    from them.templates import FormatTemplateParams
 
-    context = FormatTemplateContext(
+    param = FormatTemplateParams(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello {user},\nThis is the latest monitoring result: {result}"
     )
-    context2 = context.pipe(description='body')
+    param2 = param.pipe(description='body')
 
 
 Unir 2 variables y separarlas por un salto de línea (esta opción está de serie con el método join):
@@ -135,13 +137,13 @@ Unir 2 variables y separarlas por un salto de línea (esta opción está de seri
 .. code-block:: python
 
     from them.pipes import Join
-    from them.templates import FormatTemplateContext
+    from them.templates import FormatTemplateParams
 
-    context = FormatTemplateContext(
+    params = FormatTemplateParams(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello {user},\nThis is the latest monitoring result: {result}"
     )
-    context2 = context.pipe(body=Join('subject', 'body'), sep='\n\n')
+    params2 = params.pipe(body=Join('subject', 'body'), sep='\n\n')
 
 
 Desde archivos
@@ -155,7 +157,7 @@ un archivo de configuración dicha información:
     from then import Then, LoadComponentConfigs
 
     then = Then(LoadComponentConfigs('/path/to/config.json', section='components'))
-    then.contexts( ... )
+    then.params( ... )
 
 ``LoadComponentConfigs`` es capaz de leer desde diferentes archivos de configuración (la cual determina por la extensión del
 archivo, o usando el parámetro ``format=``), y su sección de configuración tiene una estructura cerrada:
@@ -189,7 +191,7 @@ archivo, o usando el parámetro ``format=``), y su sección de configuración ti
     }
 
 
-Reemplazar contexts
+Reemplazar params
 ===================
 
 El usuario puede querer reemplazar el template por defecto para un servicio, lo cual podría hacer desde un
@@ -205,31 +207,31 @@ fichero de configuración. La función ``from_config`` permite de nuevo este uso
 
     # TODO: desactualizado
     t = Then(...)
-    t = t.context(
-        FormatTemplateContext(
+    t = t.param(
+        FormatTemplateParams(
             subject="[{level.upper}] HDD {name} lifetime {lifetime}",
             body="Hello {user},\nThis is the latest monitoring result: {result}"
-        ).context_as('default'),
-        GetContext('default').join(body=['subject', 'body']).context_as('default@telegram'),
+        ).params_as('default'),
+        GetContext('default').join(body=['subject', 'body']).params_as('default@telegram'),
     )
-    t = t.context(LoadConfig('/path/to/config.json', section='contexts'))
+    t = t.params(LoadConfig('/path/to/config.json', section='params'))
 
 En el archivo de configuración:
 
 .. code-block:: json
 
     {
-        "contexts": [
+        "params": [
             {
-                "context_as": "default",
+                "params_as": "default",
                 "options": {
                     "subject": "[HDD Monitor] {name} lifetime {lifetime} ({level.upper})",
                     "body": "Hi {user},\Latest monitoring result:\n{result}"
                 }
             },
             {
-                "context": "default@telegram"
-                "use_context": "default",
+                "param": "default@telegram"
+                "use_param": "default",
                 "join": ["subject", "body"]
             }
         ]

@@ -48,4 +48,4 @@ class LoadComponentConfigs(LoadConfigBase):
         return component
 
     def __iter__(self):
-        return self.components
+        return iter(self.components)
