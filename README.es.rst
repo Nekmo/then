@@ -78,7 +78,7 @@ incluyéndose así una forma de poder incluir varias configuraciones y params:
     )
 
     message = params.render(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
-    # use('<config>@<params>')
+    # use('<params>@<config>')
     message.use('telegram-friend').send()
 
 
