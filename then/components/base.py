@@ -1,4 +1,4 @@
-from then.context import Params
+from then.params import Params
 from then.exceptions import ProgrammingError
 from then.renders import FormatRenderMixin
 from then.types import ItemTypes
