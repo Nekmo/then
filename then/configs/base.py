@@ -1,5 +1,6 @@
 import os
 import jsonschema
+from dataclasses import dataclass
 from typing import Union
 
 from then.configs.json import parse_json
@@ -67,3 +68,14 @@ class LoadConfigBase:
         if self.section:
             self.data = self.data[self.section]
         validate_schema(self.data, self.schema)
+
+
+@dataclass
+class LoadConfig(LoadConfigBase):
+    path: str
+    section: str = ''
+    format: Union[str, None] = None
+
+    data: Union[dict, None] = None
+
+    schema: Union[dict, None] = None

@@ -32,7 +32,7 @@ class TemplateBase:
     def get_default_template_name(self):
         return self.__class__.__name__.lower()
 
-    def get_template_as(self):
+    def get_template_name(self):
         return self._template_as or self.get_default_template_name()
 
     def template_as(self, template_as):

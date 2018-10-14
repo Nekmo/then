@@ -1,8 +1,10 @@
 from collections import defaultdict
+from typing import Type
 
 from then.configs.components import LoadComponentConfigs
 from then.configs.templates import LoadTemplates
 from then.exceptions import ThenError, InvalidUsage
+from then.templates.base import TemplateBase
 from then.utils import flat_list
 
 
@@ -39,7 +41,7 @@ class Templates:
         component_name = component_name or DEFAULT
         return template_name, component_name
 
-    def get_template(self):
+    def get_template(self) -> TemplateBase:
         if self._use in self._templates:
             # TODO: use component_name for get the best template using params
             return self._templates[self._use][-1]
@@ -54,7 +56,9 @@ class Templates:
         return templates
 
     def send(self):
-        raise NotImplementedError
+        component_name = self._get_use_name()[1]
+        params = self.get_template().render()
+        self.then.use(component_name).send(params)
 
 
 class Then:
@@ -73,7 +77,7 @@ class Then:
         args = flat_list(args, (tuple, list, LoadTemplates))
         return Templates(self, *args)
 
-    def use(self, use_name):
+    def use(self, use_name) -> 'Then':
         then = self.copy()
         then._use = use_name
         return then
