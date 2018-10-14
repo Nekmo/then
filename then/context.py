@@ -1,5 +1,0 @@
-
-
-
-class Context(dict):
-    pass

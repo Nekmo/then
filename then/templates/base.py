@@ -1,9 +1,9 @@
-from then.context import Context
+from then.context import Params
 
 
 class TemplateBase:
     def __init__(self, **kwargs):
-        self.context = Context(**kwargs)
+        self.context = Params(**kwargs)
         self._args = {}
         self._render = None
 

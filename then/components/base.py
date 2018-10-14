@@ -1,4 +1,4 @@
-from then.context import Context
+from then.context import Params
 from then.exceptions import ProgrammingError
 from then.renders import FormatRenderMixin
 from then.types import ItemTypes
@@ -49,19 +49,19 @@ class Component:
             raise ProgrammingError('_message_class is undefined on {} component class.'.format(self.__class__.__name__))
         return self._message_class
 
-    def message(self, context=None, **kwargs):
-        if context is None:
-            context = Context()
-        context.update(**kwargs)
+    def message(self, params=None, **kwargs):
+        if params is None:
+            params = Params()
+        params.update(**kwargs)
         cls = self.get_class()
         if cls._default_init:
             fields = cls.__dataclass_fields__
-            msg_ctx = {key: context[key] for key in fields if key != 'component' and key in context}
+            msg_ctx = {key: params[key] for key in fields if key != 'component' and key in params}
             message = cls(component=self, **msg_ctx)
-            message.add_extra({key: context[key] for key in context if key not in fields})
+            message.add_extra({key: params[key] for key in params if key not in fields})
             return message
         else:
-            return cls(component=self, **context)
+            return cls(component=self, **params)
 
     def send(self, context=None, **kwargs):
         return self.message(context, **kwargs).send()

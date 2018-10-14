@@ -121,5 +121,5 @@ class Yeelight(Component):
     ip: str = None
     _message_class = YeelightMessage
 
-    def message(self, context=None, **kwargs) -> YeelightMessage:
-        return super(Yeelight, self).message(context, **kwargs)
+    def message(self, params=None, **kwargs) -> YeelightMessage:
+        return super(Yeelight, self).message(params, **kwargs)

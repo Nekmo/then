@@ -1,4 +1,4 @@
-from then.context import Context
+from then.context import Params
 from then.templates.base import TemplateBase
 
 

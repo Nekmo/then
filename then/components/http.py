@@ -160,8 +160,8 @@ class Http(HttpBase):
 
     _message_class = HttpMessage
 
-    def message(self, context=None, **kwargs) -> HttpMessage:
-        return super(Http, self).message(context, **kwargs)
+    def message(self, params=None, **kwargs) -> HttpMessage:
+        return super(Http, self).message(params, **kwargs)
 
 
 class HttpMessageApiBase(HttpMessageBase):

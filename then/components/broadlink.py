@@ -118,8 +118,8 @@ class BroadLink(Component):
         if self.mac:
             self._mac = binascii.unhexlify(self.mac.encode().replace(b':', b''))
 
-    def message(self, context=None, **kwargs) -> BroadLinkMessage:
-        return super(BroadLink, self).message(context, **kwargs)
+    def message(self, params=None, **kwargs) -> BroadLinkMessage:
+        return super(BroadLink, self).message(params, **kwargs)
 
 
 def learning(ip=None, mac=None, **kwargs):
