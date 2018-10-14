@@ -2,7 +2,7 @@ from then.configs.components import LoadComponentConfigs
 from then.exceptions import ThenError
 
 
-class Contexts:
+class ParamsGroup:
     _use = 'default'
 
     def __init__(self, then, *args):
@@ -19,7 +19,7 @@ class Contexts:
         return contexts
 
     def copy(self):
-        contexts = Contexts(self.then, *self.contexts)
+        contexts = ParamsGroup(self.then, *self.contexts)
         contexts._args = self._args
         contexts._use = self._use
         return contexts
@@ -40,5 +40,5 @@ class Then:
         for component in components_list:
             self.components[component.get_use_as()] = component
 
-    def contexts(self, *args):
-        return Contexts(self, *args)
+    def params(self, *args):
+        return ParamsGroup(self, *args)
