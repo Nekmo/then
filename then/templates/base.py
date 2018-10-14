@@ -2,6 +2,8 @@ from then.params import Params
 
 
 class TemplateBase:
+    _template_as = 'default'
+
     def __init__(self, **kwargs):
         self.params = Params(**kwargs)
         self._args = {}
@@ -26,3 +28,6 @@ class TemplateBase:
 
     def __iter__(self):
         return self.get_cached_render()
+
+    def template_as(self, template_as):
+        self._template_as = template_as
