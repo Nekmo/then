@@ -46,7 +46,7 @@ Como en muchas ocasiones los mensajes no son estáticos, es posible generar el p
     params = FormatTemplateParams(
         subject="[{level.upper}] HDD {name} lifetime {lifetime}",
         body="Hello {user},\nThis is the latest monitoring result: {result}"
-    ).args(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+    ).render(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
     email = Email(to='nekmo@localhost')
     email.send(params)
 
@@ -69,16 +69,16 @@ incluyéndose así una forma de poder incluir varias configuraciones y params:
         Telegram(token='...', to='nekmo'),
         Telegram(token='...', to='myfriend').use_as('telegram-friend'),  # use_as -> config_as
     )
-    params = then.params(  # Params?
-        FormatTemplateParams(  # FormatTemplateParams?
+    templates = then.templates(
+        FormatTemplateParams(
             subject="[{level.upper}] HDD {name} lifetime {lifetime}",
             body="Hello {user},\nThis is the latest monitoring result: {result}"
         ).params_as('default'),
         GetContext('default').join(body=['subject', 'body']).params_as('default@telegram'),
     )
 
-    message = params.render(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
-    # use('<params>@<config>')
+    message = templates.render(level="error", name="SATAIII Barracuda", lifetime="10%", user="Nekmo", result="...")
+    # use('<template>@<config>')
     message.use('telegram-friend').send()
 
 

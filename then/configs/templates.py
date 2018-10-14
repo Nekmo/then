@@ -24,7 +24,6 @@ class LoadTemplates(LoadConfigBase):
                     'type': 'string',
                 }
             },
-            'required': ['template']
         }
     }
 
@@ -40,6 +39,7 @@ class LoadTemplates(LoadConfigBase):
         template = self.template_class(**template_data.get('params', {}))
         if template_name:
             template.template_as(template_name)
+        return template
 
     def __iter__(self):
         return iter(self.templates)

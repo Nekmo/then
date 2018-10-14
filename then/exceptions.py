@@ -39,6 +39,10 @@ class UnknownConfigFormatError(ConfigError):
     pass
 
 
+class InvalidUsage(ThenError):
+    pass
+
+
 def catch(fn):
     def wrap(*args, **kwargs):
         try:

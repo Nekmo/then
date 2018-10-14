@@ -149,3 +149,13 @@ def split_host_port(address, default_port=None):
     if len(parts) == 1:
         parts.append(default_port)
     return parts
+
+
+def flat_list(values, list_types=(list, tuple)):
+    items = []
+    for value in values:
+        if isinstance(value, list_types):
+            items.extend(value)
+        else:
+            items.append(value)
+    return items
