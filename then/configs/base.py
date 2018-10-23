@@ -52,7 +52,7 @@ class LoadConfigBase:
     section: str = ''
     format: Union[str, None] = None
 
-    data: Union[dict, None] = None
+    data: Union[dict, list, None] = None
 
     schema: Union[dict, None] = None
 
@@ -76,6 +76,6 @@ class LoadConfig(LoadConfigBase):
     section: str = ''
     format: Union[str, None] = None
 
-    data: Union[dict, None] = None
+    data: Union[dict, list, None] = None
 
     schema: Union[dict, None] = None

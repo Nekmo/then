@@ -1,3 +1,4 @@
+import copy
 from collections import defaultdict
 from typing import Type
 
@@ -19,11 +20,12 @@ class Templates:
         self._templates = defaultdict(list)
         for arg in args:
             self._templates[arg.get_template_name()].append(arg)
-        self._args = {}
+        self._args = args
+        self._render_params = {}
 
     def render(self, **kwargs):
         templates = self.copy()
-        templates._args = kwargs
+        templates._render_params = kwargs
         return templates
 
     def use(self, use_name):
@@ -50,14 +52,14 @@ class Templates:
             return self._templates[template_name][-1]
 
     def copy(self):
-        templates = Templates(self.then, *self._templates.values())
-        templates._args = self._args
+        templates = Templates(self.then, *copy.copy(self._args))
+        templates._render_params = self._render_params
         templates._use = self._use
         return templates
 
     def send(self):
         component_name = self._get_use_name()[1]
-        params = self.get_template().render()
+        params = self.get_template().args(**self._render_params).render()
         self.then.use(component_name).send(params)
 
 
@@ -72,6 +74,7 @@ class Then:
         self.components = {}
         for component in components_list:
             self.components[component.get_use_as()] = component
+        self._args = args
 
     def templates(self, *args):
         args = flat_list(args, (tuple, list, LoadTemplates))
@@ -83,7 +86,7 @@ class Then:
         return then
 
     def copy(self):
-        then = Then(*self.components)
+        then = Then(*self._args)
         then._use = self._use
         return then
 
