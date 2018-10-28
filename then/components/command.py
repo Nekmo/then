@@ -30,8 +30,8 @@ def get_shell(name='bash'):
 
 
 def get_execute_command(cmd, shell='bash'):
-    if isinstance(cmd, (tuple, list)):
-        return cmd
+    if not isinstance(cmd, (tuple, list)):
+        cmd = [cmd]
     return get_shell(shell) + [EXECUTE_SHELL_PARAM, ' '.join(cmd)]
 
 
