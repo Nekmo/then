@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Type
 
-from then.components.base import TemplateBase
 from then.configs.base import LoadConfigBase
+from then.templates.base import TemplateBase
 from then.templates.format import FormatTemplate
 
 

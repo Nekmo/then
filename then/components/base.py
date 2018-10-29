@@ -1,6 +1,5 @@
 from then.params import Params
 from then.exceptions import ProgrammingError
-from then.renders import FormatRenderMixin
 from then.types import ItemTypes
 
 
@@ -26,18 +25,6 @@ class MessageBase(object):
 class ConfigBase(ItemTypes):
     def send(self, **kwargs):
         raise NotImplementedError
-
-
-class TemplateBase(ItemTypes, FormatRenderMixin):
-    message_class = None
-
-    def get_message_class(self):
-        if not self.message_class:
-            raise NotImplementedError('Message class is undefined.')
-        return self.message_class
-
-    def __init__(self, **kwargs):
-        super(TemplateBase, self).__init__(**kwargs)
 
 
 class Component:
