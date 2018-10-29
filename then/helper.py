@@ -97,6 +97,8 @@ class Then:
         if self._use == DEFAULT and len(self.components) > 1:
             raise InvalidUsage('There is more than one configuration available. '
                                'Use the use("<config>") option')
+        elif self._use == DEFAULT:
+            return next(iter(self.components.values()))
         return self.components[self._use]
 
     def send(self, params=None):

@@ -31,7 +31,7 @@ class TemplateBase:
         return self.get_cached_render()
 
     def get_default_template_name(self):
-        return self.__class__.__name__.lower()
+        return 'default'
 
     def get_template_name(self):
         return self._template_as or self.get_default_template_name()
