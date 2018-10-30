@@ -38,3 +38,4 @@ class TemplateBase:
 
     def template_as(self, template_as):
         self._template_as = template_as
+        return self

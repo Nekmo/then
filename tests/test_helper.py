@@ -1,9 +1,15 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from then.components import Telegram
-from then.helper import Then
+from then.helper import Then, Templates
 from then.templates.format import FormatTemplate
+
+
+class TestTemplates(unittest.TestCase):
+    def test_exact_template_name(self):
+        template = FormatTemplate().template_as('foo')
+        self.assertEqual(Templates(Mock(), template).use('foo').get_template(), template)
 
 
 class TestThen(unittest.TestCase):
