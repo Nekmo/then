@@ -11,6 +11,10 @@ class TestTemplates(unittest.TestCase):
         template = FormatTemplate().template_as('foo')
         self.assertEqual(Templates(Mock(), template).use('foo').get_template(), template)
 
+    def test_template_name(self):
+        template = FormatTemplate().template_as('foo')
+        self.assertEqual(Templates(Mock(), template).use('foo@bar').get_template(), template)
+
 
 class TestThen(unittest.TestCase):
     @patch('then.components.Telegram.send')
