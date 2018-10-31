@@ -100,8 +100,8 @@ class Then(UseBase):
         elif self._use == DEFAULT:
             return next(iter(self.components.values()))
         template_name, component_name = self._get_use_name()
-        if template_name in self.components:
-            return self.components[component_name][-1]
+        if component_name in self.components:
+            return self.components[component_name]
         return self.components[self._use]
 
     def send(self, params=None):

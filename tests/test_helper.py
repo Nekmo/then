@@ -25,3 +25,10 @@ class TestThen(unittest.TestCase):
             FormatTemplate(body='Hello {arg1}!')
         ).render(arg1='world').send()
         m.assert_called_once_with(dict(arg1='world', body='Hello world!'))
+
+    def test_component_name(self):
+        template = Telegram(token='foo', to='bar')
+        then = Then(
+            template
+        )
+        self.assertEqual(then.use('tpl@telegram').get_component(), template)
