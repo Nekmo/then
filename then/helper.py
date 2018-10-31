@@ -12,8 +12,29 @@ from then.utils import flat_list
 DEFAULT = 'default'
 
 
-class Templates:
+class UseBase:
     _use = DEFAULT
+
+    def use(self, use_name):
+        instance = self.copy()
+        instance._use = use_name
+        return instance
+
+    def _get_use_name(self):
+        parts = self._use.split('@', 1)
+        if len(parts) > 1:
+            template_name, component_name = parts
+        else:
+            template_name, component_name = None, parts[0]
+        template_name = template_name or DEFAULT
+        component_name = component_name or DEFAULT
+        return template_name, component_name
+
+    def copy(self):
+        raise NotImplementedError
+
+
+class Templates(UseBase):
 
     def __init__(self, then, *args):
         self.then = then
@@ -27,21 +48,6 @@ class Templates:
         templates = self.copy()
         templates._render_params = kwargs
         return templates
-
-    def use(self, use_name):
-        templates = self.copy()
-        templates._use = use_name
-        return templates
-
-    def _get_use_name(self):
-        parts = self._use.split('@', 1)
-        if len(parts) > 1:
-            template_name, component_name = parts
-        else:
-            template_name, component_name = None, parts[0]
-        template_name = template_name or DEFAULT
-        component_name = component_name or DEFAULT
-        return template_name, component_name
 
     def get_template(self) -> TemplateBase:
         if self._use in self._templates:
@@ -63,8 +69,7 @@ class Templates:
         self.then.use(component_name).send(params)
 
 
-class Then:
-    _use = DEFAULT
+class Then(UseBase):
 
     def __init__(self, *args):
         if not args:
@@ -80,11 +85,6 @@ class Then:
         args = flat_list(args, (tuple, list, LoadTemplates))
         return Templates(self, *args)
 
-    def use(self, use_name) -> 'Then':
-        then = self.copy()
-        then._use = use_name
-        return then
-
     def copy(self):
         then = Then(*self._args)
         then._use = self._use
@@ -99,6 +99,9 @@ class Then:
                                'Use the use("<config>") option')
         elif self._use == DEFAULT:
             return next(iter(self.components.values()))
+        template_name, component_name = self._get_use_name()
+        if template_name in self.components:
+            return self.components[component_name][-1]
         return self.components[self._use]
 
     def send(self, params=None):
