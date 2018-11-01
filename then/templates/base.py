@@ -13,12 +13,12 @@ class TemplateBase:
         self._args.update(**kwargs)
         return self
 
-    def render(self):
+    def render_template(self):
         raise NotImplementedError
 
     def get_cached_render(self):
         if self._render is None:
-            self._render = self.render()
+            self._render = self.render_template()
         return self._render
 
     def __getitem__(self, item):
@@ -28,7 +28,10 @@ class TemplateBase:
         return item in self.get_cached_render()
 
     def __iter__(self):
-        return self.get_cached_render()
+        yield from self.get_cached_render().items()
+
+    def __eq__(self, other):
+        return dict(other) == dict(self)
 
     def get_default_template_name(self):
         return 'default'

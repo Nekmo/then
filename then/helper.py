@@ -65,7 +65,7 @@ class Templates(UseBase):
 
     def send(self):
         component_name = self._get_use_name()[1]
-        params = self.get_template().args(**self._render_params).render()
+        params = self.get_template().args(**self._render_params)
         self.then.use(component_name).send(params)
 
 

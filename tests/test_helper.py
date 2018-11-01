@@ -19,12 +19,14 @@ class TestTemplates(unittest.TestCase):
 class TestThen(unittest.TestCase):
     @patch('then.components.Telegram.send')
     def test_send(self, m):
-        Then(
+        templates = Then(
             Telegram(token='foo', to='bar')
         ).templates(
             FormatTemplate(body='Hello {arg1}!')
-        ).render(arg1='world').send()
-        m.assert_called_once_with(dict(arg1='world', body='Hello world!'))
+        )
+        render = templates.get_template().args(arg1='world')
+        templates.render(arg1='world').send()
+        m.assert_called_once_with(render)
 
     def test_component_name(self):
         template = Telegram(token='foo', to='bar')
