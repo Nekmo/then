@@ -11,17 +11,6 @@ def split_host_port(address, default_port=None, splitter=':'):
     return parts
 
 
-class MessageBase(object):
-    def __init__(self, **kwargs):
-        self.data = kwargs
-
-    def get_init_data(self, locals):
-        return {key: locals[key] for key in self.__class__.__init__.__code__.co_varnames if key != 'self'}
-
-    def send(self, config):
-        config.send(**self.data)
-
-
 class ConfigBase(ItemTypes):
     def send(self, **kwargs):
         raise NotImplementedError
