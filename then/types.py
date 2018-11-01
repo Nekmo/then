@@ -7,9 +7,8 @@ from then.exceptions import ValidationError
 
 
 class Type(object):
-    def __init__(self, required=False, default=''):
-        self.required = required
-        self.default = default
+    def __init__(self, **kwargs):
+        pass
 
     def validate(self, value):
         pass
@@ -52,20 +51,3 @@ class TypesMeta(type):
         # dct = {key: value for key, value in dct.items()
         #        if not (isinstance(value, Type) or (inspect.isclass(value) and issubclass(value, Type)))}
         super(TypesMeta, cls).__init__(name, bases, dct)
-
-
-class ItemTypes(with_metaclass(TypesMeta, object)):
-    def __init__(self, **kwargs):
-        types = self.__class__.types
-        required = {key: value for key, value in types.items() if value.required}
-        defaults = {key: value for key, value in types.items() if value.default}
-        for key, value in defaults.items():
-            if key not in kwargs:
-                kwargs[key] = value.default
-        for key in required:
-            if key not in kwargs:
-                raise ValidationError('"{}" is a required option'.format(key))
-        for key, value in kwargs.items():
-            if key in types:
-                value = types[key].clean(value)
-            setattr(self, key, value)

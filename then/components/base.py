@@ -1,6 +1,5 @@
 from then.params import Params
 from then.exceptions import ProgrammingError
-from then.types import ItemTypes
 
 
 def split_host_port(address, default_port=None, splitter=':'):
