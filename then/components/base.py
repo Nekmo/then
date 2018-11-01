@@ -11,11 +11,6 @@ def split_host_port(address, default_port=None, splitter=':'):
     return parts
 
 
-class ConfigBase(ItemTypes):
-    def send(self, **kwargs):
-        raise NotImplementedError
-
-
 class Component:
     _message_class = None
     _use_as = None
