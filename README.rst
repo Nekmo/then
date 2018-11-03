@@ -1,5 +1,5 @@
 ####
-then
+THEN
 ####
 
 
@@ -29,7 +29,19 @@ then
 
 
 A Python library for lazy developers who want actions in their projects. Send communications
-and execute actions in remote services. THEN supports most services and methods:
+and execute actions in remote services without needing to program them. Stop reinventing the
+wheel! Send an email, a Telegram message or write to a log with the same API:
+
+.. code-block:: python
+
+    from then.components import Email  # 20 different components! All with the same API
+
+    email = Email(to='nekmo@localhost')
+    email.send(subject='[ERROR] HDD SATAIII Barracuda lifetime 10%',
+               body="Hello Nekmo,\nThis is the latest monitoring result: ...")
+
+
+THEN supports most services and methods:
 
 * Telegram
 * Email
