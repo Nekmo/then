@@ -68,6 +68,7 @@ class Email(Component):
     mode: str = 'text/plain'
 
     _message_class = EmailMessage
+    _type = 'message'
 
     def __post_init__(self):
         default_config = get_default_config(self.from_)

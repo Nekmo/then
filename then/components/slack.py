@@ -76,3 +76,4 @@ class Slack(HttpBase):
     method = 'POST'
 
     _message_class = SlackMessage
+    _type = 'message'

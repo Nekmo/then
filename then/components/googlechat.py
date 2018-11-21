@@ -47,3 +47,4 @@ class GoogleChat(HttpBase):
     method = 'POST'
 
     _message_class = GoogleChatMessage
+    _type = 'message'

@@ -47,3 +47,4 @@ class Telegram(HttpBase):
     method: str = 'POST'
 
     _message_class = TelegramMessage
+    _type = 'message'

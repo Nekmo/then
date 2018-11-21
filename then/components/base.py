@@ -13,6 +13,7 @@ def split_host_port(address, default_port=None, splitter=':'):
 class Component:
     _message_class = None
     _use_as = None
+    _type = ''
 
     def get_class(self):
         if not self._message_class:

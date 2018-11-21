@@ -55,6 +55,7 @@ class Line(HttpBase):
     method = 'POST'
 
     _message_class = LineMessage
+    _type = 'message'
 
     def get_headers(self):
         return {

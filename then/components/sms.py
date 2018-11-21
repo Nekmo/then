@@ -52,6 +52,7 @@ class Sms(HttpBase):
     method = 'POST'
 
     _message_class = SmsMessage
+    _type = 'message'
 
     def get_auth(self):
         return (self.account, self.token)
