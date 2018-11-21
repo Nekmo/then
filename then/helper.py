@@ -5,6 +5,7 @@ from typing import Type
 from then.configs.components import LoadComponentConfigs
 from then.configs.templates import LoadTemplates
 from then.exceptions import ThenError, InvalidUsage
+from then.params import Params
 from then.templates.base import TemplateBase
 from then.utils import flat_list
 
@@ -20,13 +21,14 @@ class UseBase:
         instance._use = use_name
         return instance
 
-    def _get_use_name(self):
-        parts = self._use.split('@', 1)
+    def _get_use_name(self, use=None, default_template=True):
+        parts = (use or self._use).split('@', 1)
         if len(parts) > 1:
             template_name, component_name = parts
         else:
             template_name, component_name = None, parts[0]
-        template_name = template_name or DEFAULT
+        if default_template:
+            template_name = template_name or DEFAULT
         component_name = component_name or DEFAULT
         return template_name, component_name
 
@@ -53,9 +55,17 @@ class Templates(UseBase):
         if self._use in self._templates:
             # TODO: use component_name for get the best template using params
             return self._templates[self._use][-1]
-        template_name, component_name = self._get_use_name()
+        template_name, component_name = self._get_use_name(default_template=False)
+        component = None
+        if not template_name:
+            component = self.then.get_component(component_name)
+        if not template_name and component and component._type != 'message':
+            return TemplateBase()
+        elif not template_name:
+            template_name = component_name
         if template_name in self._templates:
             return self._templates[template_name][-1]
+        return TemplateBase()
 
     def copy(self):
         templates = Templates(self.then, *copy.copy(self._args))
@@ -90,19 +100,20 @@ class Then(UseBase):
         then._use = self._use
         return then
 
-    def get_component(self):
+    def get_component(self, use=None):
+        use = use or self._use
         if not self.components:
             raise InvalidUsage('There are no configurations. Registers configs using '
                                'Then(<component config>)')
-        if self._use == DEFAULT and len(self.components) > 1:
+        if use == DEFAULT and len(self.components) > 1:
             raise InvalidUsage('There is more than one configuration available. '
                                'Use the use("<config>") option')
-        elif self._use == DEFAULT:
+        elif use == DEFAULT:
             return next(iter(self.components.values()))
         template_name, component_name = self._get_use_name()
         if component_name in self.components:
             return self.components[component_name]
-        return self.components[self._use]
+        return self.components[use]
 
     def send(self, params=None):
         self.get_component().send(params)

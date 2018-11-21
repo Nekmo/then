@@ -11,7 +11,8 @@ class TemplateBase:
 
     def args(self, **kwargs):
         self._args.update(**kwargs)
-        return self
+        return self._args
+        # return self
 
     def render_template(self):
         raise NotImplementedError
