@@ -1,5 +1,6 @@
 from then.params import Params
 from then.exceptions import ProgrammingError
+from then.templates.base import TemplateBase
 
 
 def split_host_port(address, default_port=None, splitter=':'):
@@ -23,7 +24,10 @@ class Component:
     def message(self, params=None, **kwargs):
         if params is None:
             params = Params()
-        params.update(**kwargs)
+        if isinstance(params, TemplateBase):
+            params = params.args(**kwargs)
+        else:
+            params.update(**kwargs)
         cls = self.get_class()
         if cls._default_init:
             fields = cls.__dataclass_fields__

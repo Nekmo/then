@@ -11,7 +11,7 @@ class TemplateBase:
 
     def args(self, **kwargs):
         self._args.update(**kwargs)
-        return self._args
+        return self
         # return self
 
     def render_template(self):
@@ -29,7 +29,7 @@ class TemplateBase:
         return item in self.get_cached_render()
 
     def __iter__(self):
-        yield from self.get_cached_render().items()
+        yield from self.get_cached_render().keys()
 
     def __eq__(self, other):
         return dict(other) == dict(self)
