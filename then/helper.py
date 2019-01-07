@@ -7,6 +7,7 @@ from then.configs.templates import LoadTemplates
 from then.exceptions import ThenError, InvalidUsage
 from then.params import Params
 from then.templates.base import TemplateBase
+from then.templates.format import FormatTemplate
 from then.utils import flat_list
 
 
@@ -37,6 +38,7 @@ class UseBase:
 
 
 class Templates(UseBase):
+    default_template_class = FormatTemplate
 
     def __init__(self, then, *args):
         self.then = then
@@ -60,12 +62,12 @@ class Templates(UseBase):
         if not template_name:
             component = self.then.get_component(component_name)
         if not template_name and component and component._type != 'message':
-            return TemplateBase()
+            return self.default_template_class()
         elif not template_name:
             template_name = component_name
         if template_name in self._templates:
             return self._templates[template_name][-1]
-        return TemplateBase()
+        return self.default_template_class()
 
     def copy(self):
         templates = Templates(self.then, *copy.copy(self._args))
