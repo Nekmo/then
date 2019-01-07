@@ -67,6 +67,8 @@ class Templates(UseBase):
             template_name = component_name
         if template_name in self._templates:
             return self._templates[template_name][-1]
+        elif DEFAULT in self._templates:
+            return self._templates[DEFAULT][-1]
         return self.default_template_class()
 
     def copy(self):

@@ -1,38 +1,24 @@
 from then.params import Params
 
 
-class TemplateBase:
+class TemplateBase(dict):
     _template_as = None
 
     def __init__(self, **kwargs):
         self.params = Params(**kwargs)
         self._args = {}
         self._render = None
+        super().__init__()
 
     def args(self, **kwargs):
         self._args.update(**kwargs)
+        self.clear()
+        self.update(self.render_template())
         return self
         # return self
 
     def render_template(self):
         raise NotImplementedError
-
-    def get_cached_render(self):
-        if self._render is None:
-            self._render = self.render_template()
-        return self._render
-
-    def __getitem__(self, item):
-        return self.get_cached_render()[item]
-
-    def __contains__(self, item):
-        return item in self.get_cached_render()
-
-    def __iter__(self):
-        yield from self.get_cached_render().keys()
-
-    def __eq__(self, other):
-        return dict(other) == dict(self)
 
     def get_default_template_name(self):
         return 'default'
