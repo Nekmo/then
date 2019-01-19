@@ -63,7 +63,8 @@ THEN supports most services and methods:
 
 
 **This is embarrassing...** THEN is in development! It's not ready yet but you can subscribe to the project changes.
-THEN is being programmed for the `Amazon-dash <https://github.com/Nekmo/amazon-dash>`_ project (with support from 2016 and 250+ stars).
+THEN is being programmed for the `Amazon-dash <https://github.com/Nekmo/amazon-dash>`_ project (with support from
+2016 and 400+ stars).
 
 
 
