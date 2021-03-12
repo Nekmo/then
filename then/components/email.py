@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 
 DEFAULT_SERVER = 'localhost'
-DEFAULT_CONFIGS: List[Tuple[Union[str, re._pattern_type], dict]] = [
+DEFAULT_CONFIGS: List[Tuple[Union[str, re.Pattern], dict]] = [
     ('gmail.com', {'tls': True, 'server': 'smtp.gmail.com:465'}),
     (re.compile(r'yahoo\.[a-z]{2,4}', re.IGNORECASE), {'tls': True, 'server': 'smtp.mail.yahoo.com:587'}),
 ]
@@ -26,7 +26,7 @@ def get_default_config(address) -> Union[dict, None]:
     for config in DEFAULT_CONFIGS:
         if isinstance(config[0], str) and config[0] == server:
             return config[1]
-        elif isinstance(config[0], re._pattern_type) and config[0].match(server):
+        elif isinstance(config[0], re.Pattern) and config[0].match(server):
             return config[1]
 
 
